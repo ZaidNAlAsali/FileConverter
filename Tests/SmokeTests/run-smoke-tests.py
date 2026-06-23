@@ -196,6 +196,28 @@ def run_case(exe: Path, preset: str, input_path: Path, output_path: Path, timeou
         validator(output_path)
 
 
+def run_failure_case(
+    exe: Path,
+    description: str,
+    arguments: list[str],
+    expected_exit: int,
+    expected_text: str,
+    timeout: int,
+) -> None:
+    command = [str(exe), "--headless"] + arguments
+    result = run_command(command, timeout)
+    print(f"[{description}] exit={result.returncode}")
+    if result.stdout:
+        print(result.stdout.strip())
+    if result.stderr:
+        print(result.stderr.strip(), file=sys.stderr)
+    if result.returncode != expected_exit:
+        raise AssertionError(f"Expected exit {expected_exit}, got {result.returncode}: {description}")
+    combined_output = (result.stdout or "") + (result.stderr or "")
+    if expected_text not in combined_output:
+        raise AssertionError(f"Expected output to contain {expected_text!r}: {description}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--configuration", default="Debug", choices=["Debug", "Release"])
@@ -216,6 +238,44 @@ def main() -> int:
 
         png = temp / "sample image.png"
         write_png(png)
+
+        run_failure_case(
+            exe,
+            "missing input list is rejected clearly",
+            ["--conversion-preset", "To Jpg"],
+            17,
+            "No input files were provided",
+            args.timeout,
+        )
+        run_failure_case(
+            exe,
+            "missing file is rejected clearly",
+            ["--conversion-preset", "To Jpg", str(temp / "missing.png")],
+            18,
+            "Input file does not exist",
+            args.timeout,
+        )
+        no_extension = temp / "sample-without-extension"
+        no_extension.write_text("no extension", encoding="utf-8")
+        run_failure_case(
+            exe,
+            "extensionless file is rejected clearly",
+            ["--conversion-preset", "To Jpg", str(no_extension)],
+            18,
+            "Input file has no extension",
+            args.timeout,
+        )
+        incompatible = temp / "not an image.txt"
+        incompatible.write_text("not an image", encoding="utf-8")
+        run_failure_case(
+            exe,
+            "incompatible file extension is rejected clearly",
+            ["--conversion-preset", "To Jpg", str(incompatible)],
+            18,
+            "is not compatible with preset",
+            args.timeout,
+        )
+
         run_case(exe, "To Jpg", png, temp / "sample image.jpg", args.timeout)
 
         video = temp / "transcription sample.mp4"

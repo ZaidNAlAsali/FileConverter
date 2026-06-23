@@ -18,9 +18,9 @@ namespace FileConverter.Services
     public class UpgradeService : ObservableObject, IUpgradeService
     {
 #if DEBUG
-        private const string BaseURI = "https://raw.githubusercontent.com/Tichau/FileConverter/integration/";
+        private const string BaseURI = "https://raw.githubusercontent.com/ZaidNAlAsali/FileConverter/integration/";
 #else
-        private const string BaseURI = "https://raw.githubusercontent.com/Tichau/FileConverter/master/";
+        private const string BaseURI = "https://raw.githubusercontent.com/ZaidNAlAsali/FileConverter/master/";
 #endif
 
         [NotNull]
@@ -66,6 +66,11 @@ namespace FileConverter.Services
             catch (Exception exception)
             {
                 Diagnostics.Debug.Log($"Failed to check upgrade: {exception.Message}.");
+            }
+
+            if (task == null)
+            {
+                return null;
             }
 
             UpgradeVersionDescription versionDescription = await task;
@@ -155,7 +160,7 @@ namespace FileConverter.Services
         private async Task<UpgradeVersionDescription> DownloadLatestVersionDescription()
         {
 #if BUILD32
-            Uri uri = new Uri(Helpers.BaseURI + "version (x86).xml");
+            Uri uri = new Uri(UpgradeService.BaseURI + "version (x86).xml");
 #else
             Uri uri = new Uri(UpgradeService.BaseURI + "version.xml");
 #endif
@@ -175,9 +180,12 @@ namespace FileConverter.Services
                 XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
                 {
                     IgnoreWhitespace = true,
-                    IgnoreComments = true
+                    IgnoreComments = true,
+                    DtdProcessing = DtdProcessing.Prohibit,
+                    XmlResolver = null
                 };
 
+                using (stream)
                 using (XmlReader xmlReader = XmlReader.Create(stream, xmlReaderSettings))
                 {
                     description = (UpgradeVersionDescription)serializer.Deserialize(xmlReader);
@@ -206,7 +214,7 @@ namespace FileConverter.Services
 
             Uri uri = new Uri(this.UpgradeVersionDescription.InstallerURL);
 
-            string fileName = "FileConverter-setup.msi";
+            string fileName = "ZFileConverter-setup.msi";
             Regex retrieveFileNameRegex = new Regex("/([^/]*)");
             MatchCollection matchCollection = retrieveFileNameRegex.Matches(this.UpgradeVersionDescription.InstallerURL);
             if (matchCollection.Count > 0)
@@ -243,9 +251,12 @@ namespace FileConverter.Services
                 Debug.LogError("Failed to download the new ZFileConverter upgrade. You should try again or download it manually.");
                 Debug.Log(exception.ToString());
                 this.UpgradeVersionDescription.NeedToUpgrade = false;
+                this.UpgradeVersionDescription.InstallerDownloadInProgress = false;
             }
-
-            this.webClient.DownloadProgressChanged -= this.WebClient_DownloadProgressChanged;
+            finally
+            {
+                this.webClient.DownloadProgressChanged -= this.WebClient_DownloadProgressChanged;
+            }
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs eventArgs)

@@ -421,6 +421,13 @@ namespace FileConverter
                 }
             }
 
+            if (!string.IsNullOrEmpty(conversionPresetName) && filePaths.Count == 0)
+            {
+                Debug.LogError(errorCode: 0x11, $"No input files were provided for conversion preset '{conversionPresetName}'.");
+                Application.AskForShutdown();
+                return;
+            }
+
             this.RunConversions(filePaths, conversionPresetName);
         }
 
@@ -481,6 +488,13 @@ namespace FileConverter
                     for (int index = 0; index < filePaths.Count; index++)
                     {
                         string inputFilePath = filePaths[index];
+                        if (!this.TryValidateInputFile(inputFilePath, conversionPreset, out string validationError))
+                        {
+                            Debug.LogError(errorCode: 0x12, validationError);
+                            Application.AskForShutdown();
+                            return;
+                        }
+
                         ConversionJob conversionJob = ConversionJobFactory.Create(conversionPreset, inputFilePath);
 
                         conversionService.RegisterConversionJob(conversionJob);
@@ -494,6 +508,38 @@ namespace FileConverter
 
                 this.needToRunConversionThread = true;
             }
+        }
+
+        private bool TryValidateInputFile(string inputFilePath, ConversionPreset conversionPreset, out string errorMessage)
+        {
+            if (string.IsNullOrWhiteSpace(inputFilePath))
+            {
+                errorMessage = "An input file path is empty.";
+                return false;
+            }
+
+            if (!File.Exists(inputFilePath))
+            {
+                errorMessage = $"Input file does not exist: {inputFilePath}";
+                return false;
+            }
+
+            string extension = Path.GetExtension(inputFilePath);
+            if (string.IsNullOrEmpty(extension) || extension.Length <= 1)
+            {
+                errorMessage = $"Input file has no extension: {inputFilePath}";
+                return false;
+            }
+
+            extension = extension.Substring(1).ToLowerInvariant();
+            if (!conversionPreset.InputTypes.Contains(extension))
+            {
+                errorMessage = $"Input file extension '.{extension}' is not compatible with preset '{conversionPreset.FullName}': {inputFilePath}";
+                return false;
+            }
+
+            errorMessage = string.Empty;
+            return true;
         }
 
         private void UpgradeService_NewVersionAvailable(object sender, UpgradeVersionDescription e)

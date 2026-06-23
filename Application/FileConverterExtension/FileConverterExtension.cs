@@ -100,7 +100,7 @@ namespace FileConverterExtension
 
             ToolStripMenuItem fileConverterItem = new ToolStripMenuItem
             {
-                Text = "File Converter",
+                Text = "ZFileConverter",
                 Image = new Icon(Properties.Resources.ApplicationIcon, SystemInformation.SmallIconSize).ToBitmap(),
             };
 
@@ -209,7 +209,7 @@ namespace FileConverterExtension
             this.RefreshExtensionCacheFromSelectedItems();
 
             // Activate compatible menu entries.
-            PresetReference[] presets = this.presetReferences;
+            PresetReference[] presets = this.PresetReferences;
             this.menuEntries.Clear();
             foreach (string extension in this.extensionCache)
             {
@@ -265,6 +265,12 @@ namespace FileConverterExtension
             catch
             {
                 // Can't handle this error in the explorer extension.
+                this.presetReferences = new PresetReference[0];
+            }
+
+            if (this.presetReferences == null)
+            {
+                this.presetReferences = new PresetReference[0];
             }
         }
 
@@ -291,10 +297,58 @@ namespace FileConverterExtension
 
             // Build arguments string.
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("--settings");
+            AppendQuotedArgument(stringBuilder, "--settings");
             
             processStartInfo.Arguments = stringBuilder.ToString();
             Process exeProcess = Process.Start(processStartInfo);
+        }
+
+        private static void AppendQuotedArgument(StringBuilder stringBuilder, string argument)
+        {
+            if (stringBuilder.Length > 0)
+            {
+                stringBuilder.Append(' ');
+            }
+
+            if (argument == null)
+            {
+                argument = string.Empty;
+            }
+
+            stringBuilder.Append('"');
+            int backslashCount = 0;
+            for (int index = 0; index < argument.Length; index++)
+            {
+                char character = argument[index];
+                if (character == '\\')
+                {
+                    backslashCount++;
+                    continue;
+                }
+
+                if (character == '"')
+                {
+                    stringBuilder.Append('\\', backslashCount * 2 + 1);
+                    stringBuilder.Append('"');
+                    backslashCount = 0;
+                    continue;
+                }
+
+                if (backslashCount > 0)
+                {
+                    stringBuilder.Append('\\', backslashCount);
+                    backslashCount = 0;
+                }
+
+                stringBuilder.Append(character);
+            }
+
+            if (backslashCount > 0)
+            {
+                stringBuilder.Append('\\', backslashCount * 2);
+            }
+
+            stringBuilder.Append('"');
         }
 
         private void ConvertFiles(string presetName)
@@ -313,10 +367,8 @@ namespace FileConverterExtension
 
             void BuildConversionPresetArgument(StringBuilder sb)
             {
-                sb.Append("--conversion-preset ");
-                sb.Append(" \"");
-                sb.Append(presetName);
-                sb.Append("\"");
+                AppendQuotedArgument(sb, "--conversion-preset");
+                AppendQuotedArgument(sb, presetName);
             }
 
             // Build arguments string.
@@ -326,9 +378,7 @@ namespace FileConverterExtension
             string fileListPath = null;
             foreach (var filePath in this.SelectedItemPaths)
             {
-                stringBuilder.Append(" \"");
-                stringBuilder.Append(filePath);
-                stringBuilder.Append("\"");
+                AppendQuotedArgument(stringBuilder, filePath);
 
                 if (stringBuilder.Length >= MaximumProcessArgumentsLength)
                 {
@@ -354,10 +404,8 @@ namespace FileConverterExtension
                         }
                     }
 
-                    stringBuilder.Append(" --input-files ");
-                    stringBuilder.Append(" \"");
-                    stringBuilder.Append(fileListPath);
-                    stringBuilder.Append("\"");
+                    AppendQuotedArgument(stringBuilder, "--input-files");
+                    AppendQuotedArgument(stringBuilder, fileListPath);
                     break;
                 }
             }

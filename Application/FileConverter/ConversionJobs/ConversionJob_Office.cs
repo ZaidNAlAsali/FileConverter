@@ -32,6 +32,8 @@ namespace FileConverter.ConversionJobs
             get;
         }
 
+        private const int LibreOfficeConversionTimeoutMilliseconds = 300000;
+
         protected override bool IsCancelable() => false;
 
         protected override void Initialize()
@@ -135,7 +137,7 @@ namespace FileConverter.ConversionJobs
                     Task<string> standardOutputTask = process.StandardOutput.ReadToEndAsync();
                     Task<string> standardErrorTask = process.StandardError.ReadToEndAsync();
 
-                    if (!process.WaitForExit(120000))
+                    if (!process.WaitForExit(LibreOfficeConversionTimeoutMilliseconds))
                     {
                         try
                         {
@@ -146,7 +148,7 @@ namespace FileConverter.ConversionJobs
                             Debug.Log($"Unable to kill LibreOffice converter after timeout: {exception}");
                         }
 
-                        errorMessage = "LibreOffice conversion timed out after 120 seconds.";
+                        errorMessage = $"LibreOffice conversion timed out after {LibreOfficeConversionTimeoutMilliseconds / 1000} seconds.";
                         Debug.Log(errorMessage);
                         return false;
                     }
