@@ -44,6 +44,9 @@ namespace FileConverter
 
         private bool needToRunConversionThread;
         private bool cancelAutoExit;
+        private bool forceExitWhenConversionsFinished;
+        private bool failOnConversionError;
+        private bool headless;
         private bool isSessionEnding;
         private bool verbose;
         private bool showSettings;
@@ -92,6 +95,12 @@ namespace FileConverter
 
             this.Initialize();
 
+            if (this.headless)
+            {
+                this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                Debug.ShowMessageBoxes = false;
+            }
+
             // Navigate to the wanted view.
             INavigationService navigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
@@ -103,7 +112,10 @@ namespace FileConverter
 
             if (this.needToRunConversionThread)
             {
-                navigationService.Show(Pages.Main);
+                if (!this.headless)
+                {
+                    navigationService.Show(Pages.Main);
+                }
 
                 IConversionService conversionService = Ioc.Default.GetRequiredService<IConversionService>();
                 conversionService.ConversionJobsTerminated += this.ConversionService_ConversionJobsTerminated;
@@ -115,7 +127,7 @@ namespace FileConverter
                 navigationService.Show(Pages.Settings);
             }
 
-            if (this.verbose)
+            if (this.verbose && !this.headless)
             {
                 navigationService.Show(Pages.Diagnostics);
             }
@@ -131,7 +143,7 @@ namespace FileConverter
 
             if (!this.isSessionEnding && upgradeService.UpgradeVersionDescription != null && upgradeService.UpgradeVersionDescription.NeedToUpgrade)
             {
-                Debug.Log($"A new version of file converter has been found: {upgradeService.UpgradeVersionDescription.LatestVersion}.");
+                Debug.Log($"A new version of ZFileConverter has been found: {upgradeService.UpgradeVersionDescription.LatestVersion}.");
 
                 if (string.IsNullOrEmpty(upgradeService.UpgradeVersionDescription.InstallerPath))
                 {
@@ -153,7 +165,7 @@ namespace FileConverter
                     }
 
                     // Start process.
-                    Debug.Log($"Start file converter upgrade from version {ApplicationVersion} to {upgradeService.UpgradeVersionDescription.LatestVersion}.");
+                    Debug.Log($"Start ZFileConverter upgrade from version {ApplicationVersion} to {upgradeService.UpgradeVersionDescription.LatestVersion}.");
 
                     ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(installerPath) { UseShellExecute = true, };
 
@@ -218,14 +230,19 @@ namespace FileConverter
         private void Initialize()
         {
 #if BUILD32
-            Diagnostics.Debug.Log("File Converter v" + ApplicationVersion.ToString() + " (32 bits)");
+            Diagnostics.Debug.Log("ZFileConverter v" + ApplicationVersion.ToString() + " (32 bits)");
 #else
-            Diagnostics.Debug.Log("File Converter v" + ApplicationVersion.ToString() + " (64 bits)");
+            Diagnostics.Debug.Log("ZFileConverter v" + ApplicationVersion.ToString() + " (64 bits)");
 #endif
 
             // Retrieve arguments.
             Debug.Log("Retrieve arguments...");
             string[] args = Environment.GetCommandLineArgs();
+            this.headless = this.ContainsArgument(args, "headless");
+            if (this.headless)
+            {
+                Debug.ShowMessageBoxes = false;
+            }
 
             // Log arguments.
             for (int index = 0; index < args.Length; index++)
@@ -362,6 +379,30 @@ namespace FileConverter
                             index++;
                             break;
 
+                        case "headless":
+                            {
+                                this.headless = true;
+                                this.forceExitWhenConversionsFinished = true;
+                                this.failOnConversionError = true;
+                                Debug.ShowMessageBoxes = false;
+                            }
+
+                            break;
+
+                        case "exit-when-finished":
+                            {
+                                this.forceExitWhenConversionsFinished = true;
+                            }
+
+                            break;
+
+                        case "fail-on-error":
+                            {
+                                this.failOnConversionError = true;
+                            }
+
+                            break;
+
                         case "verbose":
                             {
                                 this.verbose = true;
@@ -383,12 +424,26 @@ namespace FileConverter
             this.RunConversions(filePaths, conversionPresetName);
         }
 
+        private bool ContainsArgument(string[] args, string parameterName)
+        {
+            string expectedArgument = "--" + parameterName;
+            for (int index = 1; index < args.Length; index++)
+            {
+                if (string.Equals(args[index], expectedArgument, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void RunConversions(List<string> filePaths, string conversionPresetName)
         {
             ISettingsService settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             if (settingsService.Settings == null)
             {
-                Debug.LogError(errorCode: 0x04, "Can't load File Converter settings. The application will now shutdown, if you want to fix the problem yourself please edit or delete the file: C:\\Users\\UserName\\AppData\\Local\\FileConverter\\Settings.user.xml.");
+                Debug.LogError(errorCode: 0x04, "Can't load ZFileConverter settings. The application will now shutdown. To reset settings manually, edit or delete: C:\\Users\\UserName\\AppData\\Local\\ZFileConverter\\Settings.user.xml.");
                 Application.AskForShutdown();
                 return;
             }
@@ -455,8 +510,24 @@ namespace FileConverter
             conversionService.ConversionJobsTerminated -= this.ConversionService_ConversionJobsTerminated;
 
             ISettingsService settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            bool shouldExitWhenFinished = this.forceExitWhenConversionsFinished || settingsService.Settings.ExitApplicationWhenConversionsFinished;
 
-            if (!settingsService.Settings.ExitApplicationWhenConversionsFinished)
+            if (!e.AllConversionsSucceed)
+            {
+                if (this.failOnConversionError)
+                {
+                    Debug.LogError(errorCode: 0x10, "One or more conversions failed. Check the diagnostics folder for the exact conversion error.");
+                }
+
+                if (shouldExitWhenFinished)
+                {
+                    Application.AskForShutdown();
+                }
+
+                return;
+            }
+
+            if (!shouldExitWhenFinished)
             {
                 return;
             }
@@ -466,32 +537,29 @@ namespace FileConverter
                 return;
             }
 
-            if (e.AllConversionsSucceed)
+            float remainingTime = this.headless ? 0f : settingsService.Settings.DurationBetweenEndOfConversionsAndApplicationExit;
+            while (remainingTime > 0f)
             {
-                float remainingTime = settingsService.Settings.DurationBetweenEndOfConversionsAndApplicationExit;
-                while (remainingTime > 0f)
-                {
-                    if (this.OnApplicationTerminate != null)
-                    {
-                        this.OnApplicationTerminate.Invoke(this, new ApplicationTerminateArgs(remainingTime));
-                    }
-
-                    Thread.Sleep(1000);
-                    remainingTime--;
-
-                    if (this.cancelAutoExit)
-                    {
-                        return;
-                    }
-                }
-
                 if (this.OnApplicationTerminate != null)
                 {
                     this.OnApplicationTerminate.Invoke(this, new ApplicationTerminateArgs(remainingTime));
                 }
 
-                Application.AskForShutdown();
+                Thread.Sleep(1000);
+                remainingTime--;
+
+                if (this.cancelAutoExit)
+                {
+                    return;
+                }
             }
+
+            if (this.OnApplicationTerminate != null)
+            {
+                this.OnApplicationTerminate.Invoke(this, new ApplicationTerminateArgs(remainingTime));
+            }
+
+            Application.AskForShutdown();
         }
     }
 }

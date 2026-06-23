@@ -298,6 +298,151 @@
         <Settings Key="FFMPEGCustomCommand" Value="" />
         <OutputFileNameTemplate>(p)(f)</OutputFileNameTemplate>
     </ConversionPreset>
+    <ConversionPreset Name="To Opus" OutputType="Opus" IsDefaultSettings="true">
+        <InputTypes>3gp</InputTypes>
+        <InputTypes>3gpp</InputTypes>
+        <InputTypes>avi</InputTypes>
+        <InputTypes>bik</InputTypes>
+        <InputTypes>flv</InputTypes>
+        <InputTypes>m4v</InputTypes>
+        <InputTypes>mkv</InputTypes>
+        <InputTypes>mov</InputTypes>
+        <InputTypes>mp4</InputTypes>
+        <InputTypes>mpg</InputTypes>
+        <InputTypes>mpeg</InputTypes>
+        <InputTypes>ogv</InputTypes>
+        <InputTypes>rm</InputTypes>
+        <InputTypes>ts</InputTypes>
+        <InputTypes>webm</InputTypes>
+        <InputTypes>wmv</InputTypes>
+        <InputTypes>aac</InputTypes>
+        <InputTypes>aiff</InputTypes>
+        <InputTypes>ape</InputTypes>
+        <InputTypes>flac</InputTypes>
+        <InputTypes>m4a</InputTypes>
+        <InputTypes>m4b</InputTypes>
+        <InputTypes>mp3</InputTypes>
+        <InputTypes>oga</InputTypes>
+        <InputTypes>ogg</InputTypes>
+        <InputTypes>opus</InputTypes>
+        <InputTypes>wav</InputTypes>
+        <InputTypes>wma</InputTypes>
+        <InputPostConversionAction>None</InputPostConversionAction>
+        <Settings Key="AudioBitrate" Value="96" />
+        <Settings Key="AudioChannelCount" Value="0" />
+        <Settings Key="EnableFFMPEGCustomCommand" Value="False" />
+        <Settings Key="FFMPEGCustomCommand" Value="" />
+        <OutputFileNameTemplate>(p)(f)</OutputFileNameTemplate>
+    </ConversionPreset>
+    <ConversionPreset Name="Transcription/To Mp3 (mono)" OutputType="Mp3" IsDefaultSettings="true">
+        <InputTypes>3gp</InputTypes>
+        <InputTypes>3gpp</InputTypes>
+        <InputTypes>avi</InputTypes>
+        <InputTypes>bik</InputTypes>
+        <InputTypes>flv</InputTypes>
+        <InputTypes>m4v</InputTypes>
+        <InputTypes>mkv</InputTypes>
+        <InputTypes>mov</InputTypes>
+        <InputTypes>mp4</InputTypes>
+        <InputTypes>mpg</InputTypes>
+        <InputTypes>mpeg</InputTypes>
+        <InputTypes>ogv</InputTypes>
+        <InputTypes>rm</InputTypes>
+        <InputTypes>ts</InputTypes>
+        <InputTypes>webm</InputTypes>
+        <InputTypes>wmv</InputTypes>
+        <InputTypes>aac</InputTypes>
+        <InputTypes>aiff</InputTypes>
+        <InputTypes>ape</InputTypes>
+        <InputTypes>flac</InputTypes>
+        <InputTypes>m4a</InputTypes>
+        <InputTypes>m4b</InputTypes>
+        <InputTypes>mp3</InputTypes>
+        <InputTypes>oga</InputTypes>
+        <InputTypes>ogg</InputTypes>
+        <InputTypes>opus</InputTypes>
+        <InputTypes>wav</InputTypes>
+        <InputTypes>wma</InputTypes>
+        <InputPostConversionAction>None</InputPostConversionAction>
+        <Settings Key="AudioEncodingMode" Value="Mp3CBR" />
+        <Settings Key="AudioBitrate" Value="64" />
+        <Settings Key="AudioChannelCount" Value="1" />
+        <Settings Key="EnableFFMPEGCustomCommand" Value="False" />
+        <Settings Key="FFMPEGCustomCommand" Value="" />
+        <OutputFileNameTemplate>(p)(f) (transcription)</OutputFileNameTemplate>
+    </ConversionPreset>
+    <ConversionPreset Name="Transcription/To Ogg (mono)" OutputType="Ogg" IsDefaultSettings="true">
+        <InputTypes>3gp</InputTypes>
+        <InputTypes>3gpp</InputTypes>
+        <InputTypes>avi</InputTypes>
+        <InputTypes>bik</InputTypes>
+        <InputTypes>flv</InputTypes>
+        <InputTypes>m4v</InputTypes>
+        <InputTypes>mkv</InputTypes>
+        <InputTypes>mov</InputTypes>
+        <InputTypes>mp4</InputTypes>
+        <InputTypes>mpg</InputTypes>
+        <InputTypes>mpeg</InputTypes>
+        <InputTypes>ogv</InputTypes>
+        <InputTypes>rm</InputTypes>
+        <InputTypes>ts</InputTypes>
+        <InputTypes>webm</InputTypes>
+        <InputTypes>wmv</InputTypes>
+        <InputTypes>aac</InputTypes>
+        <InputTypes>aiff</InputTypes>
+        <InputTypes>ape</InputTypes>
+        <InputTypes>flac</InputTypes>
+        <InputTypes>m4a</InputTypes>
+        <InputTypes>m4b</InputTypes>
+        <InputTypes>mp3</InputTypes>
+        <InputTypes>oga</InputTypes>
+        <InputTypes>ogg</InputTypes>
+        <InputTypes>opus</InputTypes>
+        <InputTypes>wav</InputTypes>
+        <InputTypes>wma</InputTypes>
+        <InputPostConversionAction>None</InputPostConversionAction>
+        <Settings Key="AudioBitrate" Value="48" />
+        <Settings Key="AudioChannelCount" Value="1" />
+        <Settings Key="EnableFFMPEGCustomCommand" Value="False" />
+        <Settings Key="FFMPEGCustomCommand" Value="" />
+        <OutputFileNameTemplate>(p)(f) (transcription)</OutputFileNameTemplate>
+    </ConversionPreset>
+    <ConversionPreset Name="Transcription/To Opus (mono)" OutputType="Opus" IsDefaultSettings="true">
+        <InputTypes>3gp</InputTypes>
+        <InputTypes>3gpp</InputTypes>
+        <InputTypes>avi</InputTypes>
+        <InputTypes>bik</InputTypes>
+        <InputTypes>flv</InputTypes>
+        <InputTypes>m4v</InputTypes>
+        <InputTypes>mkv</InputTypes>
+        <InputTypes>mov</InputTypes>
+        <InputTypes>mp4</InputTypes>
+        <InputTypes>mpg</InputTypes>
+        <InputTypes>mpeg</InputTypes>
+        <InputTypes>ogv</InputTypes>
+        <InputTypes>rm</InputTypes>
+        <InputTypes>ts</InputTypes>
+        <InputTypes>webm</InputTypes>
+        <InputTypes>wmv</InputTypes>
+        <InputTypes>aac</InputTypes>
+        <InputTypes>aiff</InputTypes>
+        <InputTypes>ape</InputTypes>
+        <InputTypes>flac</InputTypes>
+        <InputTypes>m4a</InputTypes>
+        <InputTypes>m4b</InputTypes>
+        <InputTypes>mp3</InputTypes>
+        <InputTypes>oga</InputTypes>
+        <InputTypes>ogg</InputTypes>
+        <InputTypes>opus</InputTypes>
+        <InputTypes>wav</InputTypes>
+        <InputTypes>wma</InputTypes>
+        <InputPostConversionAction>None</InputPostConversionAction>
+        <Settings Key="AudioBitrate" Value="48" />
+        <Settings Key="AudioChannelCount" Value="1" />
+        <Settings Key="EnableFFMPEGCustomCommand" Value="False" />
+        <Settings Key="FFMPEGCustomCommand" Value="" />
+        <OutputFileNameTemplate>(p)(f) (transcription)</OutputFileNameTemplate>
+    </ConversionPreset>
     <ConversionPreset Name="To Flac" OutputType="Flac" IsDefaultSettings="true">
         <InputTypes>wav</InputTypes>
         <InputTypes>ape</InputTypes>

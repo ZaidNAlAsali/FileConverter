@@ -27,7 +27,7 @@ namespace FileConverter.Services
             get;
             private set;
         }
-        
+
         private string UserSettingsTemporaryFilePath
         {
             get
@@ -53,7 +53,7 @@ namespace FileConverter.Services
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogError($"Fail to load file converter default settings. {exception.Message}");
+                    Debug.LogError($"Fail to load ZFileConverter default settings. {exception.Message}");
                     return false;
                 }
             }
@@ -82,7 +82,7 @@ namespace FileConverter.Services
                     {
                         this.MigrateSettingsToCurrentVersion(userSettings);
 
-                        Debug.Log($"File converter settings have been imported from version {userSettings.SerializationVersion} to version {Settings.Version}.");
+                        Debug.Log($"ZFileConverter settings have been imported from version {userSettings.SerializationVersion} to version {Settings.Version}.");
                         userSettings.SerializationVersion = Settings.Version;
                     }
 
@@ -131,8 +131,15 @@ namespace FileConverter.Services
 
                     settings = userSettings;
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    Debug.Log(exception.ToString());
+                    if (!Debug.ShowMessageBoxes)
+                    {
+                        Debug.LogError("Can't load ZFileConverter user settings. Delete Settings.user.xml or run the app normally to choose a reset option.");
+                        return null;
+                    }
+
                     MessageBoxResult messageBoxResult =
                         MessageBox.Show(Resources.ErrorCantLoadSettings,
                             Resources.Error,
@@ -154,9 +161,22 @@ namespace FileConverter.Services
                 {
                     this.MigrateSettingsToCurrentVersion(userSettings);
 
-                    Debug.Log($"File converter settings has been imported from version {userSettings.SerializationVersion} to version {Settings.Version}.");
+                    Debug.Log($"ZFileConverter settings have been imported from version {userSettings.SerializationVersion} to version {Settings.Version}.");
                     userSettings.SerializationVersion = Settings.Version;
                     this.Save(userSettings);
+                }
+
+                if (userSettings != null && File.Exists(FileConverterExtension.PathHelpers.DefaultSettingsFilePath))
+                {
+                    try
+                    {
+                        XmlHelpers.LoadFromFile<Settings>("Settings", FileConverterExtension.PathHelpers.DefaultSettingsFilePath, out Settings defaultSettings);
+                        settings = userSettings.Merge(defaultSettings);
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.LogError($"Fail to merge ZFileConverter default settings. {exception.Message}");
+                    }
                 }
             }
             else
@@ -171,7 +191,7 @@ namespace FileConverter.Services
                     }
                     catch (Exception exception)
                     {
-                        Debug.LogError($"Fail to load file converter default settings. {exception.Message}");
+                        Debug.LogError($"Fail to load ZFileConverter default settings. {exception.Message}");
                     }
                 }
                 else

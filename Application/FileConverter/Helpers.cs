@@ -111,7 +111,7 @@ namespace FileConverter
         {
             if (!Application.IsInAdmininstratorPrivileges)
             {
-                Diagnostics.Debug.LogError("File Converter needs administrator privileges to register the shell extension.");
+                Diagnostics.Debug.LogError("ZFileConverter needs administrator privileges to register the shell extension.");
                 return false;
             }
 
@@ -143,7 +143,7 @@ namespace FileConverter
         {
             if (!Application.IsInAdmininstratorPrivileges)
             {
-                Diagnostics.Debug.LogError("File Converter needs administrator privileges to unregister the shell extension.");
+                Diagnostics.Debug.LogError("ZFileConverter needs administrator privileges to unregister the shell extension.");
                 return false;
             }
 
@@ -203,6 +203,7 @@ namespace FileConverter
                 case OutputType.Flac:
                 case OutputType.Mp3:
                 case OutputType.Ogg:
+                case OutputType.Opus:
                 case OutputType.Wav:
                     return category == InputCategoryNames.Audio || category == InputCategoryNames.Video;
 
@@ -274,48 +275,144 @@ namespace FileConverter
         /// source: http://www.codeproject.com/Articles/26520/Getting-Office-s-Version
         public static bool IsMicrosoftOfficeApplicationAvailable(ConversionJobs.ConversionJob_Office.ApplicationName application)
         {
-            string registryKeyPattern = @"Software\Microsoft\Windows\CurrentVersion\App Paths\";
+            string executableName;
+            string progId;
             switch (application)
             {
                 case ConversionJob_Office.ApplicationName.Word:
-                    registryKeyPattern += "winword.exe";
+                    executableName = "winword.exe";
+                    progId = "Word.Application";
                     break;
 
                 case ConversionJob_Office.ApplicationName.PowerPoint:
-                    registryKeyPattern += "powerpnt.exe";
+                    executableName = "powerpnt.exe";
+                    progId = "PowerPoint.Application";
                     break;
 
                 case ConversionJob_Office.ApplicationName.Excel:
-                    registryKeyPattern += "excel.exe";
+                    executableName = "excel.exe";
+                    progId = "Excel.Application";
                     break;
 
-                case ConversionJob_Office.ApplicationName.None:
+                default:
                     return false;
             }
 
-            // Looks inside CURRENT_USER.
-            RegistryKey winwordKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(registryKeyPattern, false);
-            if (winwordKey != null)
+            if (TryGetOfficeApplicationPathFromRegistry(executableName, out _))
             {
-                string winwordPath = winwordKey.GetValue(string.Empty).ToString();
-                if (!string.IsNullOrEmpty(winwordPath))
+                return true;
+            }
+
+            try
+            {
+                return Type.GetTypeFromProgID(progId, false) != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsLibreOfficeAvailable()
+        {
+            return TryGetLibreOfficeExecutablePath(out _);
+        }
+
+        public static bool TryGetLibreOfficeExecutablePath(out string executablePath)
+        {
+            string libreOfficePath = Environment.GetEnvironmentVariable("LIBREOFFICE_PATH");
+            if (IsExecutableFile(libreOfficePath))
+            {
+                executablePath = libreOfficePath;
+                return true;
+            }
+
+            string[] candidatePaths = new[]
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LibreOffice", "program", "soffice.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "LibreOffice", "program", "soffice.exe"),
+                FindExecutableOnPath("soffice.exe"),
+                FindExecutableOnPath("libreoffice.exe"),
+            };
+
+            for (int index = 0; index < candidatePaths.Length; index++)
+            {
+                if (IsExecutableFile(candidatePaths[index]))
                 {
+                    executablePath = candidatePaths[index];
                     return true;
                 }
             }
 
-            // If not found, looks inside LOCAL_MACHINE.
-            winwordKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(registryKeyPattern, false);
-            if (winwordKey != null)
-            {
-                string winwordPath = winwordKey.GetValue(string.Empty).ToString();
-                if (!string.IsNullOrEmpty(winwordPath))
-                {
-                    return true;
-                }
-            }
-
+            executablePath = null;
             return false;
+        }
+
+        private static bool TryGetOfficeApplicationPathFromRegistry(string executableName, out string executablePath)
+        {
+            string registryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\App Paths\" + executableName;
+            Microsoft.Win32.RegistryKey[] registryRoots = new[]
+            {
+                Microsoft.Win32.Registry.CurrentUser,
+                Microsoft.Win32.Registry.LocalMachine,
+            };
+
+            for (int index = 0; index < registryRoots.Length; index++)
+            {
+                using (RegistryKey applicationKey = registryRoots[index].OpenSubKey(registryKeyPath, false))
+                {
+                    if (applicationKey == null)
+                    {
+                        continue;
+                    }
+
+                    string configuredPath = Convert.ToString(applicationKey.GetValue(string.Empty));
+                    if (IsExecutableFile(configuredPath))
+                    {
+                        executablePath = configuredPath.Trim('"');
+                        return true;
+                    }
+                }
+            }
+
+            executablePath = null;
+            return false;
+        }
+
+        private static string FindExecutableOnPath(string executableName)
+        {
+            string pathEnvironment = Environment.GetEnvironmentVariable("PATH");
+            if (string.IsNullOrEmpty(pathEnvironment))
+            {
+                return null;
+            }
+
+            string[] directories = pathEnvironment.Split(Path.PathSeparator);
+            for (int index = 0; index < directories.Length; index++)
+            {
+                if (string.IsNullOrWhiteSpace(directories[index]))
+                {
+                    continue;
+                }
+
+                string candidatePath = Path.Combine(directories[index], executableName);
+                if (IsExecutableFile(candidatePath))
+                {
+                    return candidatePath;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsExecutableFile(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            return File.Exists(path.Trim('"'));
         }
 
         public static ConversionJob_Office.ApplicationName GetOfficeApplicationCompatibleWithExtension(string extension)

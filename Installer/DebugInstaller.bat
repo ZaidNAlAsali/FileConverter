@@ -54,20 +54,20 @@ if "%action%"=="" (
 REM Execute action.
 REM msiexec documentation: https://www.advancedinstaller.com/user-guide/msiexec.html
 if %action%=="install" (
-    echo "Install File Converter using %MSI%..."
+    echo "Install ZFileConverter using %MSI%..."
 
     if %quiet%=="true" (
         msiexec /i %MSI% /l*v %TEMP%\vmmsi.log /quiet
     ) else (
         msiexec /i %MSI% /l*v %TEMP%\vmmsi.log
     )
-    
+
     echo "Open install logs"
     code "%TEMP%\vmmsi.log"
     exit
-) 
+)
 if %action%=="uninstall" (
-    echo "Uninstall File Converter using %MSI%..."
+    echo "Uninstall ZFileConverter using %MSI%..."
 
     if %quiet%=="true" (
         msiexec /x %MSI% /l*v %TEMP%\vmmsi.log /quiet
@@ -79,5 +79,5 @@ if %action%=="uninstall" (
     code "%TEMP%\vmmsi.log"
     exit
 )
-    
+
 echo "Invalid action " %action%

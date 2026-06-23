@@ -1,12 +1,12 @@
 ﻿<!-- Upgrade documentation: http://wixtoolset.org/documentation/manual/v3/howtos/updates/major_upgrade.html -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-    <Package Name="File Converter" Language="1033" Version="2.2.0" Manufacturer="Adrien Allard" UpgradeCode="e3ca717b-a897-418a-bbef-5c7e35c76e4b" InstallerVersion="500">
+    <Package Name="ZFileConverter" Language="1033" Version="2.2.0" Manufacturer="ZaidNAlAsali" UpgradeCode="e3ca717b-a897-418a-bbef-5c7e35c76e4b" InstallerVersion="500">
         <Icon Id="icon.ico" SourceFile="..\Resources\Icons\ApplicationIcon.ico" />
         <Property Id="ARPPRODUCTICON" Value="icon.ico" />
         <SetProperty Id="ARPINSTALLLOCATION" Value="[ApplicationFolder]" After="CostFinalize" />
-      
+
         <MajorUpgrade Schedule="afterInstallInitialize" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
-        
+
         <Media Id="1" Cabinet="CabFile.cab" EmbedCab="yes" />
 
         <Feature Id="Application" Title="Installer" Level="1">
@@ -33,15 +33,15 @@
             <Custom Action="InstallShell" After="WriteRegistryValues" Condition="NOT Installed" />
             <Custom Action="PostInstallInit" After="InstallFinalize" Condition="NOT Installed" />
         </InstallExecuteSequence>
-        
+
         <ui:WixUI Id="WixUI_InstallDir" />
         <Property Id="MSIUSEREALADMINDETECTION" Value="1" />
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
         <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" Secure="yes" /> <!-- This avoid an issue where the installer detect the utilization of the extension dll in explorer and then, ask to the user to restart these applications. The restart fails. -->
-      
-        <WixVariable Id="WixUILicenseRtf" Value="License.rtf" /> 
+
+        <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
         <WixVariable Id="WixUIBannerBmp" Value="..\Resources\Installer\Banner.bmp" />
-        <WixVariable Id="WixUIDialogBmp" Value="..\Resources\Installer\UI.bmp" /> 
+        <WixVariable Id="WixUIDialogBmp" Value="..\Resources\Installer\UI.bmp" />
         <WixVariable Id="WixUIExclamationIco" Value="..\Resources\Installer\ErrorIcon.ico" />
         <WixVariable Id="WixUIInfoIco" Value="..\Resources\Installer\WarningIcon.ico" />
         <!--<WixVariable Id="WixUINewIco" Value="Icon16x16.ico" />
@@ -53,7 +53,7 @@
             <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
         </StandardDirectory>
         <StandardDirectory Id="ProgramMenuFolder">
-            <Directory Id="ApplicationStartMenuShortcut" Name="File Converter" />
+            <Directory Id="ApplicationStartMenuShortcut" Name="ZFileConverter" />
         </StandardDirectory>
     </Fragment>
 
@@ -62,10 +62,10 @@
             <!-- Application -->
             <Component Guid="{EFA8CCE9-E501-4C80-AE33-710D11CC2525}">
                 <File Id="FileConverter.exe" Source="$(var.FileConverter.TargetPath)" KeyPath="yes" Checksum="yes">
-                    <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationStartMenuShortcut" Advertise="yes" WorkingDirectory="INSTALLFOLDER" Name="File Converter" Description="Convert and compress everything in 2 clicks!" Icon="Icon.exe">
+                    <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationStartMenuShortcut" Advertise="yes" WorkingDirectory="INSTALLFOLDER" Name="ZFileConverter" Description="Convert and compress files quickly." Icon="Icon.exe">
                         <Icon Id="Icon.exe" SourceFile="$(var.FileConverter.TargetPath)" />
                     </Shortcut>
-                    <Shortcut Id="ApplicationSettingsStartMenuShortcut" Directory="ApplicationStartMenuShortcut" Advertise="yes" WorkingDirectory="INSTALLFOLDER" Name="File Converter Settings" Description="Configure the conversion and compression presets" Arguments="--settings" Icon="SettingsIcon.exe">
+                    <Shortcut Id="ApplicationSettingsStartMenuShortcut" Directory="ApplicationStartMenuShortcut" Advertise="yes" WorkingDirectory="INSTALLFOLDER" Name="ZFileConverter Settings" Description="Configure conversion and compression presets" Arguments="--settings" Icon="SettingsIcon.exe">
                         <Icon Id="SettingsIcon.exe" SourceFile="$(var.FileConverter.TargetPath)" />
                     </Shortcut>
                 </File>
@@ -74,7 +74,7 @@
             <Component Guid="{3E003FD3-46CA-4F4F-811E-663332828229}">
                 <File Id="FileConverter.exe.config" Source="$(var.FileConverter.TargetDir)FileConverter.exe.config" KeyPath="yes" Checksum="yes" />
             </Component>
-            
+
             <!-- Extension -->
             <Component Guid="{35B28709-C56C-4F18-9A41-4B238402EE48}">
                 <File Id="FileConverterExtension.dll" Source="$(var.FileConverterExtension.TargetDir)FileConverterExtension.dll" KeyPath="yes" Checksum="yes" />
@@ -82,7 +82,7 @@
             <Component Guid="{566A73FB-427D-43C4-9ABC-92F2528F6D0A}">
                 <File Id="SharpShell.dll" Source="$(var.FileConverterExtension.TargetDir)SharpShell.dll" KeyPath="yes" Checksum="yes" />
             </Component>
-            
+
             <!-- Third parties -->
             <Component Guid="{bae11ca4-0842-46f0-b0e5-95ecc1c994fc}">
                 <File Id="CommunityToolkit.Mvvm.dll" Source="$(var.FileConverter.TargetDir)CommunityToolkit.Mvvm.dll" KeyPath="yes" Checksum="yes" />
@@ -127,7 +127,7 @@
             <Component Guid="{3B94F60C-29BF-4E51-AF85-C10DF19B0B2E}">
               <File Id="Magick.NET.dll" Source="$(var.FileConverter.TargetDir)Magick.NET-Q16-AnyCPU.dll" KeyPath="yes" Checksum="yes" />
             </Component>
-          
+
             <Component Guid="{BEEAAC73-C479-4080-83B1-2B1448C7378C}">
                 <File Id="ffmpeg.exe" Source="$(var.FileConverter.TargetDir)ffmpeg.exe" KeyPath="yes" Checksum="yes" />
             </Component>
@@ -149,7 +149,7 @@
             <Component Guid="{6268D6C0-42D8-4487-AC4B-33C9874C9E2F}">
                 <File Id="WpfAnimatedGif.dll" KeyPath="yes" Source="$(var.FileConverter.TargetDir)WpfAnimatedGif.dll" Checksum="yes" />
             </Component>
-            
+
             <!-- Configuration and documentation -->
             <Component Guid="{AD58807A-2AE2-48BE-AB55-9BDE9BBE37F3}">
                 <File Id="Settings.default.xml" Source="$(var.FileConverter.ProjectDir)\Settings.default.xml" KeyPath="yes" />
@@ -166,7 +166,7 @@
 
             <!-- Registry entries -->
             <Component Id="RegistryEntries" Guid="{1862E9DC-1B37-4AFD-85BF-2E9CFFAFA9F8}">
-                <RegistryKey Root="HKCU" Key="Software\FileConverter" ForceDeleteOnUninstall="yes">
+                <RegistryKey Root="HKCU" Key="Software\ZFileConverter" ForceDeleteOnUninstall="yes">
                     <RegistryValue Name="Path" Type="string" Value="[INSTALLFOLDER]FileConverter.exe" />
                 </RegistryKey>
             </Component>

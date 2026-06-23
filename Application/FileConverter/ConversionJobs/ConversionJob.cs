@@ -6,7 +6,7 @@ namespace FileConverter.ConversionJobs
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using System.Windows.Input;
-    
+
     using CommunityToolkit.Mvvm.Input;
 
     using FileConverter.Diagnostics;
@@ -57,7 +57,7 @@ namespace FileConverter.ConversionJobs
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         public ConversionPreset ConversionPreset
         {
             get;
@@ -336,7 +336,7 @@ namespace FileConverter.ConversionJobs
 
             this.StartTime = DateTime.Now;
             this.State = ConversionState.InProgress;
-            
+
             try
             {
                 this.Convert();
@@ -348,6 +348,12 @@ namespace FileConverter.ConversionJobs
 
             this.StateFlags = ConversionFlags.None;
 
+            if (this.State != ConversionState.Failed && !this.AllOutputFilesExists())
+            {
+                Debug.LogError(Properties.Resources.ErrorCantFindOutputFiles);
+                this.ConversionFailed(Properties.Resources.ErrorCantFindOutputFiles);
+            }
+
             if (this.State == ConversionState.Failed)
             {
                 this.OnConversionFailed();
@@ -357,11 +363,7 @@ namespace FileConverter.ConversionJobs
                 this.OnConversionSucceed();
             }
 
-            if (this.State == ConversionState.Done && !this.AllOutputFilesExists())
-            {
-                Debug.LogError(Properties.Resources.ErrorCantFindOutputFiles);
-            }
-            else if (this.State == ConversionState.Failed && this.AtLeastOneOutputFilesExists())
+            if (this.State == ConversionState.Failed && this.AtLeastOneOutputFilesExists())
             {
                 Debug.Log(Properties.Resources.ErrorConversionFailedWithOutput);
             }

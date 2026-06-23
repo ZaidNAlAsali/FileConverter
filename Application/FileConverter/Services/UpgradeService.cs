@@ -44,7 +44,7 @@ namespace FileConverter.Services
                 this.OnPropertyChanged();
             }
         }
-        
+
         public async Task<UpgradeVersionDescription> CheckForUpgrade()
         {
             Task<UpgradeVersionDescription> task = null;
@@ -240,14 +240,14 @@ namespace FileConverter.Services
             }
             catch (Exception exception)
             {
-                Debug.LogError("Failed to download the new File Converter upgrade. You should try again or download it manually.");
+                Debug.LogError("Failed to download the new ZFileConverter upgrade. You should try again or download it manually.");
                 Debug.Log(exception.ToString());
                 this.UpgradeVersionDescription.NeedToUpgrade = false;
             }
 
             this.webClient.DownloadProgressChanged -= this.WebClient_DownloadProgressChanged;
         }
-        
+
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs eventArgs)
         {
             this.UpgradeVersionDescription.InstallerDownloadProgress = eventArgs.ProgressPercentage;

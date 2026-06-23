@@ -48,11 +48,11 @@ namespace FileConverter.ConversionJobs
                 Excel.Worksheet worksheet = sheet as Excel.Worksheet;
                 if (worksheet != null)
                 {
-                    pagesCount = worksheet.PageSetup.Pages.Count;
+                    pagesCount += worksheet.PageSetup.Pages.Count;
                 }
             }
 
-            return pagesCount;
+            return Math.Max(1, pagesCount);
         }
 
         protected override void Initialize()
@@ -94,12 +94,60 @@ namespace FileConverter.ConversionJobs
                 throw new System.Exception("The conversion preset must be valid.");
             }
 
+            string conversionError = string.Empty;
+
+            if (Helpers.IsMicrosoftOfficeApplicationAvailable(this.Application))
+            {
+                try
+                {
+                    this.ConvertWithMicrosoftExcel();
+                    return;
+                }
+                catch (Exception exception)
+                {
+                    conversionError = exception.Message;
+                    Debug.Log(exception.ToString());
+                    Debug.Log("Microsoft Excel conversion failed. Trying fallback converter if available.");
+                    this.CloseDocumentIfNeeded();
+                    this.ReleaseOfficeApplicationInstanceIfNeeded();
+                    this.DeleteIntermediateFileIfNeeded();
+                }
+            }
+            else
+            {
+                Debug.Log("Microsoft Excel is not available. Trying fallback converter if available.");
+            }
+
+            if (this.ConversionPreset.OutputType == OutputType.Pdf || this.pdf2ImageConversionJob != null)
+            {
+                if (this.TryConvertWithLibreOfficeToPdf(this.intermediateFilePath, out string libreOfficeError))
+                {
+                    if (this.pdf2ImageConversionJob != null)
+                    {
+                        this.ConvertIntermediatePdfToImagesIfNeeded();
+                    }
+
+                    return;
+                }
+
+                conversionError = this.CombineOfficeAndFallbackErrors(conversionError, libreOfficeError);
+            }
+
+            if (string.IsNullOrEmpty(conversionError))
+            {
+                conversionError = Properties.Resources.ErrorUnableToUseMicrosoftOffice;
+            }
+
+            this.ConversionFailed(conversionError);
+        }
+
+        private void ConvertWithMicrosoftExcel()
+        {
             this.UserState = Properties.Resources.ConversionStateReadDocument;
 
             if (!this.TryLoadDocumentIfNecessary())
             {
-                this.ConversionFailed(Properties.Resources.ErrorUnableToUseMicrosoftOffice);
-                return;
+                throw new InvalidOperationException(Properties.Resources.ErrorUnableToUseMicrosoftOffice);
             }
 
             // Make this document the active document.
@@ -110,41 +158,40 @@ namespace FileConverter.ConversionJobs
             Debug.Log("Convert excel document to pdf.");
             this.document.ExportAsFixedFormat(Excel.Enums.XlFixedFormatType.xlTypePDF, this.intermediateFilePath);
 
-            Debug.Log($"Close excel document '{this.InputFilePath}'.");
-            this.document.Close(false);
-            this.document = null;
-
+            this.EnsureIntermediatePdfExists();
+            this.CloseDocumentIfNeeded();
             this.ReleaseOfficeApplicationInstanceIfNeeded();
-            
-            if (this.pdf2ImageConversionJob != null)
+            this.ConvertIntermediatePdfToImagesIfNeeded();
+        }
+
+        private void ConvertIntermediatePdfToImagesIfNeeded()
+        {
+            if (this.pdf2ImageConversionJob == null)
             {
-                if (!System.IO.File.Exists(this.intermediateFilePath))
-                {
-                    this.ConversionFailed(Properties.Resources.ErrorCantFindOutputFiles);
-                    return;
-                }
-
-                Task updateProgress = this.UpdateProgress();
-
-                Debug.Log("Convert pdf to images.");
-
-                this.pdf2ImageConversionJob.StartConversion();
-
-                if (this.pdf2ImageConversionJob.State != ConversionState.Done)
-                {
-                    this.ConversionFailed(this.pdf2ImageConversionJob.ErrorMessage);
-                    return;
-                }
-
-                if (!string.IsNullOrEmpty(this.intermediateFilePath))
-                {
-                    Debug.Log($"Delete intermediate file {this.intermediateFilePath}.");
-
-                    File.Delete(this.intermediateFilePath);
-                }
-
-                updateProgress.Wait();
+                return;
             }
+
+            if (!File.Exists(this.intermediateFilePath))
+            {
+                this.ConversionFailed(Properties.Resources.ErrorCantFindOutputFiles);
+                return;
+            }
+
+            Task updateProgress = this.UpdateProgress();
+
+            Debug.Log("Convert pdf to images.");
+
+            this.pdf2ImageConversionJob.StartConversion();
+
+            if (this.pdf2ImageConversionJob.State != ConversionState.Done)
+            {
+                this.ConversionFailed(this.pdf2ImageConversionJob.ErrorMessage);
+                return;
+            }
+
+            this.DeleteFileIfNeeded(this.intermediateFilePath, "intermediate");
+
+            updateProgress.Wait();
         }
 
         protected override void InitializeOfficeApplicationInstanceIfNecessary()
@@ -158,7 +205,8 @@ namespace FileConverter.ConversionJobs
             Diagnostics.Debug.Log("Instantiate excel application via interop.");
             this.application = new Excel.Application
             {
-                Visible = false
+                Visible = false,
+                DisplayAlerts = false,
             };
         }
 
@@ -170,8 +218,18 @@ namespace FileConverter.ConversionJobs
             }
 
             Diagnostics.Debug.Log("Quit excel application via interop.");
-            this.application.Quit();
-            this.application = null;
+            try
+            {
+                this.application.Quit();
+            }
+            catch (Exception exception)
+            {
+                Debug.Log($"Failed to quit excel application: {exception}");
+            }
+            finally
+            {
+                this.application = null;
+            }
         }
 
         private async Task UpdateProgress()
@@ -193,7 +251,7 @@ namespace FileConverter.ConversionJobs
                 await Task.Delay(40);
             }
         }
-        
+
         private bool TryLoadDocumentIfNecessary()
         {
             try
@@ -219,6 +277,38 @@ namespace FileConverter.ConversionJobs
             }
 
             return this.document != null;
+        }
+
+        private void CloseDocumentIfNeeded()
+        {
+            if (this.document == null)
+            {
+                return;
+            }
+
+            try
+            {
+                Debug.Log($"Close excel document '{this.InputFilePath}'.");
+                this.document.Close(false);
+            }
+            catch (Exception exception)
+            {
+                Debug.Log($"Failed to close excel document '{this.InputFilePath}': {exception}");
+            }
+            finally
+            {
+                this.document = null;
+            }
+        }
+
+        private void EnsureIntermediatePdfExists()
+        {
+            this.EnsureFileExistsAndIsNotEmpty(this.intermediateFilePath);
+        }
+
+        private void DeleteIntermediateFileIfNeeded()
+        {
+            this.DeleteFileIfNeeded(this.intermediateFilePath, "partial intermediate");
         }
     }
 }

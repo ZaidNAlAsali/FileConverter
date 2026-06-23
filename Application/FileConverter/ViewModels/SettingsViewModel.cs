@@ -73,6 +73,7 @@ namespace FileConverter.ViewModels
 
             List<OutputTypeViewModel> outputTypeViewModels = new List<OutputTypeViewModel>();
             outputTypeViewModels.Add(new OutputTypeViewModel(OutputType.Ogg));
+            outputTypeViewModels.Add(new OutputTypeViewModel(OutputType.Opus));
             outputTypeViewModels.Add(new OutputTypeViewModel(OutputType.Mp3));
             outputTypeViewModels.Add(new OutputTypeViewModel(OutputType.Aac));
             outputTypeViewModels.Add(new OutputTypeViewModel(OutputType.Flac));

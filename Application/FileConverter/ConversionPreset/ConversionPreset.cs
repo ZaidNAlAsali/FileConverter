@@ -435,6 +435,13 @@ namespace FileConverter
                     this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.FFMPEGCustomCommand, string.Empty);
                     break;
 
+                case OutputType.Opus:
+                    this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.AudioBitrate, "96");
+                    this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.AudioChannelCount, "0");
+                    this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.EnableFFMPEGCustomCommand, "False");
+                    this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.FFMPEGCustomCommand, string.Empty);
+                    break;
+
                 case OutputType.Mp3:
                     this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.AudioEncodingMode, EncodingMode.Mp3VBR.ToString(), true);
                     this.InitializeSettingsValue(ConversionPreset.ConversionSettingKeys.AudioBitrate, "190");

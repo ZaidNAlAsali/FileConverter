@@ -77,9 +77,9 @@ namespace FileConverter.ConversionJobs
 
             this.ffmpegProcessStartInfo = new ProcessStartInfo(ffmpegPath)
             {
-                CreateNoWindow = true, 
-                UseShellExecute = false, 
-                RedirectStandardOutput = true, 
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = false,
                 RedirectStandardError = true
             };
 
@@ -88,7 +88,7 @@ namespace FileConverter.ConversionJobs
 
         protected virtual void FillFFMpegArgumentsList()
         {
-            const string baseArgs = "-n -progress pipe:1";
+            const string baseArgs = "-n -nostdin -progress pipe:2";
 
             bool customCommandEnabled = this.ConversionPreset.GetSettingsValue<bool>(ConversionPreset.ConversionSettingKeys.EnableFFMPEGCustomCommand);
             if (customCommandEnabled)
@@ -315,6 +315,19 @@ namespace FileConverter.ConversionJobs
 
                     break;
 
+                case OutputType.Opus:
+                    {
+                        string channelArgs = ConversionJob_FFMPEG.ComputeAudioChannelArgs(this.ConversionPreset);
+
+                        int encodingBitrate = this.ConversionPreset.GetSettingsValue<int>(ConversionPreset.ConversionSettingKeys.AudioBitrate);
+                        string encoderArgs = $"-vn -codec:a libopus -b:a {encodingBitrate}k -vbr on {channelArgs}";
+                        string arguments = $"{baseArgs} -i \"{this.InputFilePath}\" {encoderArgs} \"{this.OutputFilePath}\"";
+
+                        this.ffmpegArgumentStringByPass.Add(new FFMpegPass(arguments));
+                    }
+
+                    break;
+
                 case OutputType.Ogv:
                     {
                         // https://trac.ffmpeg.org/wiki/TheoraVorbisEncodingGuide
@@ -464,11 +477,22 @@ namespace FileConverter.ConversionJobs
                         }
 
                         exeProcess.WaitForExit();
+
+                        if (exeProcess.ExitCode != 0)
+                        {
+                            string message = $"FFmpeg failed with exit code {exeProcess.ExitCode}. Check diagnostics for the full FFmpeg output.";
+                            this.ConversionFailed(message);
+                            throw new Exception(message);
+                        }
                     }
                 }
                 catch
                 {
-                    this.ConversionFailed(Properties.Resources.ErrorFailedToLaunchFFMPEG);
+                    if (this.State != ConversionState.Failed)
+                    {
+                        this.ConversionFailed(Properties.Resources.ErrorFailedToLaunchFFMPEG);
+                    }
+
                     throw;
                 }
             }

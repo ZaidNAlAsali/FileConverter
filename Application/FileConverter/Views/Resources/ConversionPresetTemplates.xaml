@@ -645,6 +645,9 @@
             <DataTrigger Binding="{Binding OutputType}" Value="Ogg">
                 <Setter Property="ContentTemplate" Value="{StaticResource OggSettingsDataTemplate}"/>
             </DataTrigger>
+            <DataTrigger Binding="{Binding OutputType}" Value="Opus">
+                <Setter Property="ContentTemplate" Value="{StaticResource OggSettingsDataTemplate}"/>
+            </DataTrigger>
             <DataTrigger Binding="{Binding OutputType}" Value="Ogv">
                 <Setter Property="ContentTemplate" Value="{StaticResource OgvSettingsDataTemplate}"/>
             </DataTrigger>

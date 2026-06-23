@@ -2,21 +2,40 @@
 
 namespace FileConverterExtension
 {
-    using System.IO;
     using System;
+    using System.IO;
     using Microsoft.Win32;
 
     public static class PathHelpers
     {
+        private const string ProductName = "ZFileConverter";
+        private const string LegacyProductName = "FileConverter";
+        private const string RegistryKeyPath = @"Software\ZFileConverter";
+        private const string LegacyRegistryKeyPath = @"Software\FileConverter";
+
         private static RegistryKey fileConverterRegistryKey;
         private static string fileConverterPath;
 
-        public static string UserSettingsFilePath => Path.Combine(PathHelpers.GetUserDataFolderPath, "Settings.user.xml");
+        public static string UserSettingsFilePath
+        {
+            get
+            {
+                string userSettingsFilePath = Path.Combine(PathHelpers.GetUserDataFolderPath, "Settings.user.xml");
+                PathHelpers.TryMigrateLegacyUserSettings(userSettingsFilePath);
+                return userSettingsFilePath;
+            }
+        }
 
         public static string DefaultSettingsFilePath
         {
             get
             {
+                string localDefaultSettingsPath = Path.Combine(Path.GetDirectoryName(typeof(PathHelpers).Assembly.Location), "Settings.default.xml");
+                if (File.Exists(localDefaultSettingsPath))
+                {
+                    return localDefaultSettingsPath;
+                }
+
                 string pathToFileConverterExecutable = PathHelpers.FileConverterPath;
                 if (string.IsNullOrEmpty(pathToFileConverterExecutable))
                 {
@@ -33,10 +52,11 @@ namespace FileConverterExtension
             {
                 if (PathHelpers.fileConverterRegistryKey == null)
                 {
-                    PathHelpers.fileConverterRegistryKey = Registry.CurrentUser.OpenSubKey(@"Software\FileConverter");
+                    PathHelpers.fileConverterRegistryKey = Registry.CurrentUser.OpenSubKey(PathHelpers.RegistryKeyPath) ??
+                                                           Registry.CurrentUser.OpenSubKey(PathHelpers.LegacyRegistryKeyPath);
                     if (PathHelpers.fileConverterRegistryKey == null)
                     {
-                        throw new Exception("Can't retrieve file converter registry entry.");
+                        throw new Exception("Can't retrieve ZFileConverter registry entry.");
                     }
                 }
 
@@ -61,8 +81,8 @@ namespace FileConverterExtension
         {
             get
             {
-                string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-                path = Path.Combine(path, "FileConverter");
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                path = Path.Combine(path, PathHelpers.ProductName);
 
                 if (!Directory.Exists(path))
                 {
@@ -70,6 +90,38 @@ namespace FileConverterExtension
                 }
 
                 return path;
+            }
+        }
+
+        private static string GetLegacyUserDataFolderPath
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(path, PathHelpers.LegacyProductName);
+            }
+        }
+
+        private static void TryMigrateLegacyUserSettings(string userSettingsFilePath)
+        {
+            if (File.Exists(userSettingsFilePath))
+            {
+                return;
+            }
+
+            string legacyUserSettingsFilePath = Path.Combine(PathHelpers.GetLegacyUserDataFolderPath, "Settings.user.xml");
+            if (!File.Exists(legacyUserSettingsFilePath))
+            {
+                return;
+            }
+
+            try
+            {
+                File.Copy(legacyUserSettingsFilePath, userSettingsFilePath);
+            }
+            catch
+            {
+                // Best effort migration. If it fails, the application will recreate settings from defaults.
             }
         }
     }

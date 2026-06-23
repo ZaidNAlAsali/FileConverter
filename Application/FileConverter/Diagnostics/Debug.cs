@@ -38,7 +38,7 @@ namespace FileConverter.Diagnostics
             }
 
             string diagnosticsFolderName = $"Diagnostics-{DateTime.Now.Hour}h{DateTime.Now.Minute}m{DateTime.Now.Second}s";
-            
+
             Debug.diagnosticsFolderPath = Path.Combine(path, diagnosticsFolderName);
             Debug.diagnosticsFolderPath = PathHelpers.GenerateUniquePath(Debug.diagnosticsFolderPath);
             Directory.CreateDirectory(Debug.diagnosticsFolderPath);
@@ -51,6 +51,12 @@ namespace FileConverter.Diagnostics
             get;
             private set;
         }
+
+        public static bool ShowMessageBoxes
+        {
+            get;
+            set;
+        } = true;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
@@ -79,7 +85,10 @@ namespace FileConverter.Diagnostics
 
         public static void LogError(string message)
         {
-            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (Debug.ShowMessageBoxes)
+            {
+                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             Debug.LogInternal(error: true, $"Error: {message}", ConsoleColor.Red);
         }
