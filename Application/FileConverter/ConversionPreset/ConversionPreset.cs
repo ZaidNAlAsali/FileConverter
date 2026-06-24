@@ -552,6 +552,7 @@ namespace FileConverter
                     break;
 
                 // Documents
+                case OutputType.Docx:
                 case OutputType.Pdf:
                     break;
 

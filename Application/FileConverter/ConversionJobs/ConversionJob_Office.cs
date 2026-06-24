@@ -93,14 +93,34 @@ namespace FileConverter.ConversionJobs
 
         protected bool TryConvertWithLibreOfficeToPdf(string outputFilePath, out string errorMessage)
         {
-            errorMessage = string.Empty;
-
             if (!this.OutputRequiresPdfConversion())
             {
                 errorMessage = $"LibreOffice fallback is only available for PDF or image-page outputs. Requested output: {this.ConversionPreset?.OutputType}.";
                 Debug.Log(errorMessage);
                 return false;
             }
+
+            string conversionFilter = this.GetLibreOfficePdfExportFilter();
+            string convertToArgument = string.IsNullOrEmpty(conversionFilter) ? "pdf" : "pdf:" + conversionFilter;
+            return this.TryConvertWithLibreOffice(convertToArgument, "pdf", null, outputFilePath, out errorMessage);
+        }
+
+        protected bool TryConvertWithLibreOfficeToDocx(string outputFilePath, out string errorMessage)
+        {
+            string inputExtension = Path.GetExtension(this.InputFilePath);
+            if (!string.Equals(inputExtension, ".pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                errorMessage = "LibreOffice DOCX fallback is only available for PDF inputs.";
+                Debug.Log(errorMessage);
+                return false;
+            }
+
+            return this.TryConvertWithLibreOffice("docx", "docx", "writer_pdf_import", outputFilePath, out errorMessage);
+        }
+
+        private bool TryConvertWithLibreOffice(string convertToArgument, string outputExtension, string inputFilter, string outputFilePath, out string errorMessage)
+        {
+            errorMessage = string.Empty;
 
             if (!Helpers.TryGetLibreOfficeExecutablePath(out string libreOfficePath))
             {
@@ -116,15 +136,13 @@ namespace FileConverter.ConversionJobs
             {
                 this.UserState = Properties.Resources.ConversionStateConversion;
 
-                string conversionFilter = this.GetLibreOfficePdfExportFilter();
-                string convertToArgument = string.IsNullOrEmpty(conversionFilter) ? "pdf" : "pdf:" + conversionFilter;
+                Debug.Log($"Convert document to {outputExtension} with LibreOffice: {libreOfficePath}.");
 
-                Debug.Log($"Convert Office document to pdf with LibreOffice: {libreOfficePath}.");
-
+                string inputFilterArgument = string.IsNullOrEmpty(inputFilter) ? string.Empty : $" --infilter={QuoteArgument(inputFilter)}";
                 System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = libreOfficePath,
-                    Arguments = $"--headless --nologo --nofirststartwizard --norestore --nodefault --nolockcheck --convert-to {QuoteArgument(convertToArgument)} --outdir {QuoteArgument(tempDirectory)} {QuoteArgument(this.InputFilePath)}",
+                    Arguments = $"--headless --nologo --nofirststartwizard --norestore --nodefault --nolockcheck{inputFilterArgument} --convert-to {QuoteArgument(convertToArgument)} --outdir {QuoteArgument(tempDirectory)} {QuoteArgument(this.InputFilePath)}",
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
@@ -174,19 +192,19 @@ namespace FileConverter.ConversionJobs
                     }
                 }
 
-                string expectedOutputPath = Path.Combine(tempDirectory, Path.GetFileNameWithoutExtension(this.InputFilePath) + ".pdf");
+                string expectedOutputPath = Path.Combine(tempDirectory, Path.GetFileNameWithoutExtension(this.InputFilePath) + "." + outputExtension);
                 if (!File.Exists(expectedOutputPath))
                 {
-                    string[] pdfFiles = Directory.GetFiles(tempDirectory, "*.pdf");
-                    if (pdfFiles.Length == 1)
+                    string[] outputFiles = Directory.GetFiles(tempDirectory, "*." + outputExtension);
+                    if (outputFiles.Length == 1)
                     {
-                        expectedOutputPath = pdfFiles[0];
+                        expectedOutputPath = outputFiles[0];
                     }
                 }
 
                 if (!File.Exists(expectedOutputPath))
                 {
-                    errorMessage = "LibreOffice did not produce a PDF output file.";
+                    errorMessage = $"LibreOffice did not produce a {outputExtension.ToUpperInvariant()} output file.";
                     Debug.Log(errorMessage);
                     return false;
                 }

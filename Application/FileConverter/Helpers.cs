@@ -123,18 +123,25 @@ namespace FileConverter
 
             Diagnostics.Debug.Log($"Install and register shell extension: {shellExtensionPath}.");
 
-            var regasm = new RegAsm();
-            var success = regasm.Register64(shellExtensionPath, true);
-            if (success)
+            try
             {
-                Diagnostics.Debug.Log($"{shellExtensionPath} installed and registered.");
-                Diagnostics.Debug.Log(regasm.StandardOutput);
-                return true;
-            }
-            else
-            {
+                var regasm = new RegAsm();
+                var success = regasm.Register64(shellExtensionPath, true);
+                if (success)
+                {
+                    Diagnostics.Debug.Log($"{shellExtensionPath} installed and registered.");
+                    Diagnostics.Debug.Log(regasm.StandardOutput);
+                    return true;
+                }
+
                 Diagnostics.Debug.LogError(errorCode: 0x05, $"{shellExtensionPath} failed to register.");
                 Diagnostics.Debug.LogError(regasm.StandardError);
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Diagnostics.Debug.LogError(errorCode: 0x05, $"{shellExtensionPath} failed to register.");
+                Diagnostics.Debug.Log(exception.ToString());
                 return false;
             }
         }
@@ -155,18 +162,25 @@ namespace FileConverter
 
             Diagnostics.Debug.Log($"Unregister and uninstall shell extension: {shellExtensionPath}.");
 
-            var regasm = new RegAsm();
-            var success = regasm.Unregister64(shellExtensionPath);
-            if (success)
+            try
             {
-                Diagnostics.Debug.Log($"{shellExtensionPath} uninstalled.");
-                Diagnostics.Debug.Log(regasm.StandardOutput);
-                return true;
-            }
-            else
-            {
+                var regasm = new RegAsm();
+                var success = regasm.Unregister64(shellExtensionPath);
+                if (success)
+                {
+                    Diagnostics.Debug.Log($"{shellExtensionPath} uninstalled.");
+                    Diagnostics.Debug.Log(regasm.StandardOutput);
+                    return true;
+                }
+
                 Diagnostics.Debug.LogError(errorCode: 0x05, $"{shellExtensionPath} failed to uninstall.");
                 Diagnostics.Debug.LogError(regasm.StandardError);
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Diagnostics.Debug.LogError(errorCode: 0x05, $"{shellExtensionPath} failed to uninstall.");
+                Diagnostics.Debug.Log(exception.ToString());
                 return false;
             }
         }
@@ -224,8 +238,10 @@ namespace FileConverter
                 case OutputType.Gif:
                     return category == InputCategoryNames.Image || category == InputCategoryNames.Video || category == InputCategoryNames.AnimatedImage;
 
+                case OutputType.Docx:
                 case OutputType.Pdf:
-                    return category == InputCategoryNames.Image || category == InputCategoryNames.Document;
+                    return category == InputCategoryNames.Document ||
+                           (outputType == OutputType.Pdf && category == InputCategoryNames.Image);
 
                 default:
                     return false;

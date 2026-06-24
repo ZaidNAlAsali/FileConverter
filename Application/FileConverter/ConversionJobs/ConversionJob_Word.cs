@@ -28,11 +28,25 @@ namespace FileConverter.ConversionJobs
 
         protected override ApplicationName Application => ApplicationName.Word;
 
+        protected override bool HasAlternativeOfficeConverter()
+        {
+            if (base.HasAlternativeOfficeConverter())
+            {
+                return true;
+            }
+
+            return this.ConversionPreset != null &&
+                   this.ConversionPreset.OutputType == OutputType.Docx &&
+                   string.Equals(Path.GetExtension(this.InputFilePath), ".pdf", StringComparison.OrdinalIgnoreCase) &&
+                   Helpers.IsLibreOfficeAvailable();
+        }
+
         protected override bool IsCancelable() => false;
 
         protected override int GetOutputFilesCount()
         {
-            if (this.ConversionPreset.OutputType == OutputType.Pdf)
+            if (this.ConversionPreset.OutputType == OutputType.Pdf ||
+                this.ConversionPreset.OutputType == OutputType.Docx)
             {
                 return 1;
             }
@@ -65,6 +79,11 @@ namespace FileConverter.ConversionJobs
             if (this.ConversionPreset.OutputType == OutputType.Pdf)
             {
                 this.intermediateFilePath = this.OutputFilePath;
+            }
+            else if (this.ConversionPreset.OutputType == OutputType.Docx)
+            {
+                this.intermediateFilePath = string.Empty;
+                this.pdf2ImageConversionJob = null;
             }
             else
             {
@@ -124,6 +143,15 @@ namespace FileConverter.ConversionJobs
 
                 conversionError = string.IsNullOrEmpty(conversionError) ? libreOfficeError : $"{conversionError}\nLibreOffice fallback failed: {libreOfficeError}";
             }
+            else if (this.ConversionPreset.OutputType == OutputType.Docx)
+            {
+                if (this.TryConvertWithLibreOfficeToDocx(this.OutputFilePath, out string libreOfficeError))
+                {
+                    return;
+                }
+
+                conversionError = string.IsNullOrEmpty(conversionError) ? libreOfficeError : $"{conversionError}\nLibreOffice fallback failed: {libreOfficeError}";
+            }
 
             if (string.IsNullOrEmpty(conversionError))
             {
@@ -148,6 +176,12 @@ namespace FileConverter.ConversionJobs
 
             this.UserState = Properties.Resources.ConversionStateConversion;
 
+            if (this.ConversionPreset.OutputType == OutputType.Docx)
+            {
+                this.ConvertWithMicrosoftWordToDocx();
+                return;
+            }
+
             Debug.Log("Convert word document to pdf.");
             this.document.ExportAsFixedFormat(
                 this.intermediateFilePath,
@@ -169,6 +203,15 @@ namespace FileConverter.ConversionJobs
             this.CloseDocumentIfNeeded();
             this.ReleaseOfficeApplicationInstanceIfNeeded();
             this.ConvertIntermediatePdfToImagesIfNeeded();
+        }
+
+        private void ConvertWithMicrosoftWordToDocx()
+        {
+            Debug.Log("Convert document to docx with Microsoft Word.");
+            this.document.SaveAs2(this.OutputFilePath, Word.Enums.WdSaveFormat.wdFormatXMLDocument);
+            this.EnsureFileExistsAndIsNotEmpty(this.OutputFilePath);
+            this.CloseDocumentIfNeeded();
+            this.ReleaseOfficeApplicationInstanceIfNeeded();
         }
 
         private void ConvertIntermediatePdfToImagesIfNeeded()
