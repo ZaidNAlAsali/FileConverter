@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
 
       - name: Configure MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Configure NuGet
-        uses: NuGet/setup-nuget@v2
+        uses: NuGet/setup-nuget@v4.0
 
       - name: Restore and build
         run: msbuild FileConverter.sln -t:Restore,Build -p:Configuration=Release -p:Platform=x64 -v:minimal
@@ -45,7 +45,7 @@ jobs:
           }
 
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: ZFileConverter-x64-release
           path: Installer/bin/x64/Release/ZFileConverter-setup.msi
