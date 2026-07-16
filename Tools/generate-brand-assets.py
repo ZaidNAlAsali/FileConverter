@@ -181,6 +181,57 @@ def build_hero(icon):
     return hero
 
 
+def build_installer_banner(icon):
+    width, height = 493, 58
+    banner = vertical_gradient(width, height, (249, 251, 255, 255), (232, 239, 248, 255))
+    draw = ImageDraw.Draw(banner)
+
+    draw.rectangle((0, 0, width, 3), fill=(44, 118, 242, 255))
+    draw.polygon([(405, 3), (493, 3), (493, 58), (428, 58)], fill=(9, 22, 39, 255))
+    draw.polygon([(405, 3), (421, 3), (444, 58), (428, 58)], fill=(35, 94, 180, 255))
+    draw.line((0, 57, width, 57), fill=(195, 208, 226, 255), width=1)
+
+    icon_small = icon.resize((44, 44), Image.Resampling.LANCZOS)
+    banner.alpha_composite(icon_small, (442, 8))
+    return banner.convert("RGB")
+
+
+def build_installer_dialog(icon):
+    width, height = 493, 312
+    dialog = vertical_gradient(width, height, (250, 252, 255, 255), (241, 246, 252, 255))
+    draw = ImageDraw.Draw(dialog)
+
+    left_panel = vertical_gradient(170, height, (7, 16, 30, 255), (16, 39, 67, 255))
+    glow = Image.new("RGBA", (170, height), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).ellipse((-90, 40, 250, 330), fill=(37, 112, 235, 70))
+    left_panel.alpha_composite(glow.filter(ImageFilter.GaussianBlur(65)))
+    dialog.alpha_composite(left_panel, (0, 0))
+
+    grid = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    grid_draw = ImageDraw.Draw(grid)
+    for x in range(10, 170, 32):
+        grid_draw.line((x, 0, x, height), fill=(112, 162, 229, 28), width=1)
+    for y in range(10, height, 32):
+        grid_draw.line((0, y, 170, y), fill=(112, 162, 229, 28), width=1)
+    dialog.alpha_composite(grid)
+
+    draw = ImageDraw.Draw(dialog)
+    draw.rectangle((0, 0, width, 4), fill=(44, 118, 242, 255))
+    draw.rectangle((166, 4, 170, height), fill=(44, 118, 242, 255))
+    draw.rectangle((24, 230, 68, 234), fill=(255, 143, 105, 255))
+
+    icon_large = icon.resize((112, 112), Image.Resampling.LANCZOS)
+    dialog.alpha_composite(icon_large, (29, 55))
+
+    brand_font = load_font("seguisb.ttf", 16)
+    tagline_font = load_font("seguisb.ttf", 11)
+    draw.text((23, 181), "ZFILECONVERTER", font=brand_font, fill=(239, 246, 255, 255))
+    draw.text((23, 244), "RIGHT-CLICK.", font=tagline_font, fill=(167, 188, 216, 255))
+    draw.text((23, 261), "CONVERT. DONE.", font=tagline_font, fill=(167, 188, 216, 255))
+
+    return dialog.convert("RGB")
+
+
 SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
   <title id="title">ZFileConverter icon</title>
   <desc id="desc">A folded document with a blue Z-shaped conversion arrow on a midnight rounded square.</desc>
@@ -216,7 +267,14 @@ SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="i
 
 def write_ico(icon, path, sizes=ICO_SIZES):
     path.parent.mkdir(parents=True, exist_ok=True)
-    icon.save(path, format="ICO", sizes=[(size, size) for size in sizes])
+    # Use DIB/BMP-backed frames rather than PNG-compressed frames. Explorer's
+    # System.Drawing.Icon path corrupts PNG-compressed multi-frame ICO data.
+    icon.save(
+        path,
+        format="ICO",
+        sizes=[(size, size) for size in sizes],
+        bitmap_format="bmp",
+    )
 
 
 def main():
@@ -244,6 +302,11 @@ def main():
     images = ROOT / "docs" / "images"
     images.mkdir(parents=True, exist_ok=True)
     build_hero(icon).convert("RGB").save(images / "zfileconverter-hero.png", quality=94)
+
+    installer = ROOT / "Resources" / "Installer"
+    installer.mkdir(parents=True, exist_ok=True)
+    build_installer_banner(icon).save(installer / "Banner.bmp")
+    build_installer_dialog(icon).save(installer / "UI.bmp")
 
     print("Generated ZFileConverter icon assets.")
 

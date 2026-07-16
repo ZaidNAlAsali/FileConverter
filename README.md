@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.0/ZFileConverter-setup.msi"><strong>Download ZFileConverter 2.3.0</strong></a>
+  <a href="https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.1/ZFileConverter-setup.msi"><strong>Download ZFileConverter 2.3.1</strong></a>
   ·
   <a href="CHANGELOG.md">Release notes</a>
   ·
@@ -80,7 +80,7 @@ ZFileConverter also checks the standard 64-bit and 32-bit LibreOffice installati
 
 ## Install
 
-1. Download [`ZFileConverter-setup.msi`](https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.0/ZFileConverter-setup.msi).
+1. Download [`ZFileConverter-setup.msi`](https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.1/ZFileConverter-setup.msi).
 2. Run the installer.
 3. Select files in File Explorer and open the **ZFileConverter** context menu.
 

@@ -1,5 +1,13 @@
 # Change Log
 
+## Version 2.3.1
+
+### Branding fixes
+
+- Rebuilt the Explorer context-menu icon with Windows-compatible DIB/BMP-backed ICO frames, fixing the rainbow-noise corruption caused by `System.Drawing.Icon` decoding PNG-compressed frames.
+- Replaced the installer wizard's legacy blue File Converter artwork with purpose-built ZFileConverter banner and dialog artwork using the midnight, cobalt, and coral visual system.
+- Regenerated the application, shell-extension, installer, and repository icon assets from the same deterministic source.
+
 ## Version 2.3.0
 
 ### Experience
