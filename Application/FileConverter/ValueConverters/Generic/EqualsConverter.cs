@@ -31,7 +31,7 @@ namespace FileConverter.ValueConverters.Generic
                 return parameter;
             }
 
-            return null;
+            return Binding.DoNothing;
         }
     }
 }

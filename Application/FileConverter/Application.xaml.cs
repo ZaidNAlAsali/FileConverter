@@ -38,7 +38,7 @@ namespace FileConverter
         private static readonly Version Version = new Version()
                                                       {
                                                           Major = 2,
-                                                          Minor = 2,
+                                                          Minor = 3,
                                                           Patch = 0,
                                                       };
 
@@ -92,6 +92,10 @@ namespace FileConverter
             AttachConsole(ATTACH_PARENT_PROCESS);
             
             this.RegisterServices();
+
+            ISettingsService themeSettingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            ApplicationThemeManager.ApplyTheme(
+                themeSettingsService.Settings?.AppearanceTheme ?? ApplicationTheme.Dark);
 
             this.Initialize();
 

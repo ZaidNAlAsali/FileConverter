@@ -9,6 +9,12 @@ namespace FileConverter
 
     using CommunityToolkit.Mvvm.ComponentModel;
 
+    public enum ApplicationTheme
+    {
+        Dark,
+        Light,
+    }
+
     [XmlRoot]
     [XmlType]
     public class Settings : ObservableObject, IXmlSerializable
@@ -23,6 +29,7 @@ namespace FileConverter
         private int maximumNumberOfSimultaneousConversions;
         private bool copyFilesInClipboardAfterConversion = false;
         private Helpers.HardwareAccelerationMode hardwareAccelerationMode = Helpers.HardwareAccelerationMode.Off;
+        private ApplicationTheme appearanceTheme = ApplicationTheme.Dark;
 
         public ConversionPreset GetPresetFromName(string presetName)
         {
@@ -113,6 +120,27 @@ namespace FileConverter
                 }
 
                 this.ApplicationLanguage = CultureInfo.GetCultureInfo(value);
+            }
+        }
+
+        [XmlElement]
+        public ApplicationTheme AppearanceTheme
+        {
+            get
+            {
+                return this.appearanceTheme;
+            }
+
+            set
+            {
+                if (this.appearanceTheme == value)
+                {
+                    return;
+                }
+
+                this.appearanceTheme = value;
+                ApplicationThemeManager.ApplyTheme(value);
+                this.OnPropertyChanged();
             }
         }
 

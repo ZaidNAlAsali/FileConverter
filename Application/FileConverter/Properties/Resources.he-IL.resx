@@ -217,7 +217,7 @@
     <value>ללא</value>
   </data>
   <data name="InstallButtonDescription" xml:space="preserve">
-    <value>הורדת העדכון הושלמה. סגור את File Converter כדי שהעדכון יותקן.</value>
+    <value>הורדת העדכון הושלמה. סגור את ZFileConverter כדי שהעדכון יותקן.</value>
   </data>
   <data name="InstallButtonTitle" xml:space="preserve">
     <value>התקן כשאני יוצא מFiler Conveter</value>
@@ -308,7 +308,7 @@ use maj for uppercase version</value>
     <value>הצג יומן שינויים... </value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>הגדרות File Converter</value>
+    <value>הגדרות ZFileConverter</value>
   </data>
   <data name="SettingsButtonTooltip" xml:space="preserve">
     <value>הגדרות</value>
@@ -320,13 +320,13 @@ use maj for uppercase version</value>
     <value>סיבוב של 90° בכיוון השעון</value>
   </data>
   <data name="UpgradeAvailable" xml:space="preserve">
-    <value>עדכון עבור File Converter זמין. מומלץ מאוד להתקין אותו בהקדם האפשרי!</value>
+    <value>עדכון עבור ZFileConverter זמין. מומלץ מאוד להתקין אותו בהקדם האפשרי!</value>
   </data>
   <data name="UpgradeDownloadInProgress" xml:space="preserve">
     <value>הורדת העדכון מתבצעת ...</value>
   </data>
   <data name="UpgradeWindowTitle" xml:space="preserve">
-    <value>עדכוני File Converter</value>
+    <value>עדכוני ZFileConverter</value>
   </data>
   <data name="VideoEncodingQualityTooltip" xml:space="preserve">
     <value>הגדר את היחס 'גודל קובץ' לעומת 'איכות וידאו'. ערך נמוך יותר ייתן לך קובץ קטן יותר, ערך גדול יותר ייתן לך איכות וידאו טובה יותר.</value>
@@ -494,7 +494,7 @@ use maj for uppercase version</value>
     <value>סטריאו</value>
   </data>
   <data name="FileConverterStartHelp3" xml:space="preserve">
-    <value>כדי להשתמש בFile Converter, פתח את תפריט ההקשר על הקובץ שאותו אתה רוצה להמיר (עיין בתיעוד המקוון כדי לראות את רשימת תבניות הקובץ התואמות).</value>
+    <value>כדי להשתמש בZFileConverter, פתח את תפריט ההקשר על הקובץ שאותו אתה רוצה להמיר (עיין בתיעוד המקוון כדי לראות את רשימת תבניות הקובץ התואמות).</value>
   </data>
   <data name="LicenceHeader1" xml:space="preserve">
     <value>**התוכנה הזו היא תוכנה חינמית בקוד פתוח**.</value>
@@ -542,7 +542,7 @@ use maj for uppercase version</value>
     <value>יש להתקין את Microsoft Word כדי להמיר מסמכי Word.</value>
   </data>
   <data name="WebsiteButtonDescription" xml:space="preserve">
-    <value>פתח את דף הבית של File Converter</value>
+    <value>פתח את דף הבית של ZFileConverter</value>
   </data>
   <data name="SayThanksButtonTitle" xml:space="preserve">
     <value>אמור תודה !</value>

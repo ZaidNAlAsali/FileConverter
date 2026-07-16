@@ -1,20 +1,27 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+about: Propose a focused improvement to ZFileConverter
+title: "[Feature] "
+labels: enhancement
+assignees: ""
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Problem
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+What conversion or workflow problem are you trying to solve?
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Proposed experience
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+Describe what should happen from the user's point of view. If this affects the Explorer context menu, explain how the menu should remain concise.
+
+## Example files or formats
+
+List the relevant input and output formats. Do not upload private documents or media.
+
+## Alternatives considered
+
+How do you handle this today, and what tradeoff does your proposal improve?
+
+## Additional context
+
+Add screenshots, mockups, compatibility notes, or implementation ideas if useful.

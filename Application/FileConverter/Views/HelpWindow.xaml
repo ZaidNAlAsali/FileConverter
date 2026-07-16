@@ -5,28 +5,145 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fileConverter="clr-namespace:FileConverter"
         xmlns:project="clr-namespace:FileConverter.Properties"
-        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-        mc:Ignorable="d" Icon="/FileConverter;component/Resources/ApplicationIcon.ico" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ResizeMode="NoResize" 
-        Width="1000" Height="880"
+        mc:Ignorable="d"
+        Icon="/FileConverter;component/Resources/ApplicationIcon.ico"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResize"
+        MinWidth="720" MinHeight="620" Width="980" Height="820"
+        Background="{DynamicResource CanvasBrush}"
+        fileConverter:ApplicationThemeManager.EnableWindowTheme="True"
         DataContext="{Binding Help, Source={StaticResource Locator}}">
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Closing">
             <behaviors:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
-    <Window.Resources>
-    </Window.Resources>
+
     <Window.Title>
-        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(fileConverter:Application.ApplicationVersion)"/>
+        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(fileConverter:Application.ApplicationVersion)" />
     </Window.Title>
-    <StackPanel Margin="5" VerticalAlignment="Center">
-        <TextBlock Margin="0,0,0,4"  Text="{x:Static project:Resources.FileConverterStartHelp1}" TextWrapping="Wrap" FontWeight="Bold" FontSize="13.333"/>
-        <TextBlock Text="{x:Static project:Resources.FileConverterStartHelp2}" TextWrapping="Wrap"/>
-        <TextBlock Text="{x:Static project:Resources.FileConverterStartHelp3}" TextWrapping="Wrap" />
-        <Image Margin="0,7,0,7" HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Top" Width="Auto" 
-               gif:ImageBehavior.AnimatedSource="/FileConverter;component/Resources/FileConverterUsage.gif"
-               Stretch="Fill"/>
-        <Button Content="{x:Static project:Resources.Ok}" Height="28" Command="{Binding CloseCommand}"/>
-    </StackPanel>
+
+    <Grid Margin="30,26,30,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Width="54" Height="54" CornerRadius="15" Background="{DynamicResource InkPanelBrush}" Margin="0,0,15,0">
+                <Image Width="35" Height="35" Source="/FileConverter;component/Resources/ApplicationIcon.png" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="WELCOME TO ZFILECONVERTER" Style="{StaticResource EyebrowText}" />
+                <TextBlock Text="Right-click. Convert. Done." Style="{StaticResource PageTitleText}" FontSize="27" />
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="14" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{x:Static project:Resources.FileConverterStartHelp1}"
+                               Style="{StaticResource SectionTitleText}" TextWrapping="Wrap" />
+                    <TextBlock Text="{x:Static project:Resources.FileConverterStartHelp2}"
+                               Style="{StaticResource BodySecondaryText}" Margin="0,7,0,0" />
+                    <TextBlock Text="{x:Static project:Resources.FileConverterStartHelp3}"
+                               Style="{StaticResource BodySecondaryText}" Margin="0,3,0,0" />
+                </StackPanel>
+
+                <Border Grid.Row="2" Background="{DynamicResource SurfaceSoftBrush}" BorderBrush="{DynamicResource BorderSoftBrush}"
+                        BorderThickness="1" CornerRadius="12" Padding="18">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="38" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="38" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}"
+                                BorderThickness="1" CornerRadius="12" Padding="18">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid Width="54" Height="54">
+                                    <Border CornerRadius="16" Background="{DynamicResource AccentSoftBrush}" />
+                                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8B7;" FontSize="25"
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border Width="21" Height="21" CornerRadius="11" Background="{DynamicResource AccentBrush}"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-5,-5,0">
+                                        <TextBlock Text="1" Foreground="White" FontSize="11" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                                <TextBlock Text="Select your files" Style="{StaticResource SectionTitleText}"
+                                           FontSize="15" TextAlignment="Center" Margin="0,14,0,0" />
+                                <TextBlock Text="Start exactly where your files already live in Explorer."
+                                           Style="{StaticResource CaptionText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,6,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Grid.Column="1" FontFamily="Segoe Fluent Icons" Text="&#xE72A;" FontSize="20"
+                                   Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}"
+                                BorderThickness="1" CornerRadius="12" Padding="18">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid Width="54" Height="54">
+                                    <Border CornerRadius="16" Background="{DynamicResource WarmAccentSoftBrush}" />
+                                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8A7;" FontSize="25"
+                                               Foreground="{DynamicResource WarmAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border Width="21" Height="21" CornerRadius="11" Background="{DynamicResource WarmAccentBrush}"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-5,-5,0">
+                                        <TextBlock Text="2" Foreground="White" FontSize="11" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                                <TextBlock Text="Right-click once" Style="{StaticResource SectionTitleText}"
+                                           FontSize="15" TextAlignment="Center" Margin="0,14,0,0" />
+                                <TextBlock Text="Open ZFileConverter directly from the familiar Windows menu."
+                                           Style="{StaticResource CaptionText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,6,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Grid.Column="3" FontFamily="Segoe Fluent Icons" Text="&#xE72A;" FontSize="20"
+                                   Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <Border Grid.Column="4" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSoftBrush}"
+                                BorderThickness="1" CornerRadius="12" Padding="18">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid Width="54" Height="54">
+                                    <Border CornerRadius="16" Background="{DynamicResource AccentSoftBrush}" />
+                                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8D4;" FontSize="25"
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border Width="21" Height="21" CornerRadius="11" Background="{DynamicResource AccentBrush}"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-5,-5,0">
+                                        <TextBlock Text="3" Foreground="White" FontSize="11" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                                <TextBlock Text="Choose a format" Style="{StaticResource SectionTitleText}"
+                                           FontSize="15" TextAlignment="Center" Margin="0,14,0,0" />
+                                <TextBlock Text="ZFileConverter takes care of the conversion and shows the result."
+                                           Style="{StaticResource CaptionText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,6,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Button Grid.Row="4" Content="{x:Static project:Resources.Ok}" MinWidth="120" HorizontalAlignment="Right"
+                Style="{StaticResource PrimaryButton}" Command="{Binding CloseCommand}" />
+    </Grid>
 </Window>

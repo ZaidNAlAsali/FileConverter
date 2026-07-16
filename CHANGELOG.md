@@ -1,5 +1,32 @@
 # Change Log
 
+## Version 2.3.0
+
+### Experience
+
+- Completely redesigned the queue, preset editor, application settings, onboarding, diagnostics, upgrade, and About surfaces for a cohesive native Windows experience.
+- Added a purpose-built dark theme as the default, with an equally complete light theme that switches instantly and persists across launches.
+- Added theme-aware native title bars, context menus, controls, progress states, validation, focus states, and compact-window layouts.
+- Replaced the legacy startup animation with a clear three-step File Explorer workflow.
+- Added a new multi-resolution ZFileConverter application icon and unified visible product branding.
+- Improved keyboard behavior and accessibility names for icon-only and appearance controls.
+
+### Defaults and conversion workflow
+
+- Reduced the first-run preset library from 81 entries to 16 focused everyday conversions, while keeping advanced preset creation, editing, importing, and exporting available.
+- Preserved existing and customized preset libraries during upgrades instead of deleting presets inherited from older packaged defaults.
+- Added AVIF to the preset editor's available output formats.
+- Added PDF to DOCX conversion through Microsoft Word or LibreOffice when available.
+- Improved Microsoft Office detection and added validated LibreOffice fallbacks for Word, Excel, and PowerPoint document conversion.
+- Added deterministic headless conversion options for automation and release verification.
+- Hardened FFmpeg progress handling, output validation, diagnostics, and shell-extension failure behavior.
+
+### Release and maintenance
+
+- Updated the installer and in-app updater metadata for ZFileConverter 2.3.0.
+- Pointed release update metadata at the active integration branch so packaged builds retrieve the maintained ZFileConverter feed.
+- Refreshed the repository presentation, screenshots, issue templates, build documentation, and release workflow.
+
 ## Version 2.2
 
 - New: AMD AMF hardware acceleration option for MP4/MKV H.264 conversions (thanks to bharatvansh).

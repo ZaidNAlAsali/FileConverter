@@ -17,11 +17,7 @@ namespace FileConverter.Services
 
     public class UpgradeService : ObservableObject, IUpgradeService
     {
-#if DEBUG
-        private const string BaseURI = "https://raw.githubusercontent.com/ZaidNAlAsali/FileConverter/integration/";
-#else
-        private const string BaseURI = "https://raw.githubusercontent.com/ZaidNAlAsali/FileConverter/master/";
-#endif
+        private const string BaseURI = "https://raw.githubusercontent.com/ZaidNAlAsali/ZFileConverter/integration/";
 
         [NotNull]
         private readonly WebClient webClient = new WebClient();

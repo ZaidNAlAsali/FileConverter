@@ -137,11 +137,11 @@
     <value>Audio</value>
   </data>
   <data name="AutomaticallyCheckForUpdates" xml:space="preserve">
-    <value>Vérifier automatiquement les mises à jour au démarrage de File Converter</value>
-    <comment>Automatically check for updates when File Converter starts</comment>
+    <value>Vérifier automatiquement les mises à jour au démarrage de ZFileConverter</value>
+    <comment>Automatically check for updates when ZFileConverter starts</comment>
   </data>
   <data name="AutomaticallyExitWhenAllConversionsFinished" xml:space="preserve">
-    <value>Fermer File Converter après que toutes les conversions ont réussis</value>
+    <value>Fermer ZFileConverter après que toutes les conversions ont réussis</value>
   </data>
   <data name="ClampToLowestPowerOfTwoSize" xml:space="preserve">
     <value>Ajuster la taille à la puissance de 2 la plus proche</value>
@@ -174,12 +174,12 @@
     <value>N'oubliez pas de récompenser mon travail si vous l'apréciez :)</value>
   </data>
   <data name="DownloadAndInstallButtonDescription" xml:space="preserve">
-    <value>La mise à jour sera téléchargée en tâche de fond et sera installée à la fermeture de File Converter.</value>
-    <comment>The update will be downloaded in background, and installed once you exit File Converter.</comment>
+    <value>La mise à jour sera téléchargée en tâche de fond et sera installée à la fermeture de ZFileConverter.</value>
+    <comment>The update will be downloaded in background, and installed once you exit ZFileConverter.</comment>
   </data>
   <data name="DownloadAndInstallButtonTitle" xml:space="preserve">
-    <value>Installer lorsque je quitte File Converter</value>
-    <comment>Install when I exit File Converter</comment>
+    <value>Installer lorsque je quitte ZFileConverter</value>
+    <comment>Install when I exit ZFileConverter</comment>
   </data>
   <data name="Encoding" xml:space="preserve">
     <value>Encodage :</value>
@@ -188,15 +188,15 @@
     <value>Vitesse d'encodage :</value>
   </data>
   <data name="FileConverterStartHelp1" xml:space="preserve">
-    <value>File Converter est une extension.</value>
+    <value>ZFileConverter est une extension.</value>
   </data>
   <data name="FileConverterStartHelp2" xml:space="preserve">
     <value>Cela signifie qu'il est intégré dans l'explorateur Windows.</value>
     <comment>That means it is integrated into the Windows explorer.</comment>
   </data>
   <data name="FileConverterStartHelp3" xml:space="preserve">
-    <value>Pour utiliser File Converter, ouvrez l'explorateur et faites un clic droit sur le ou les fichier(s) que vous souhaitez convertir pour faire apparaître le menu contextuel où vous trouverez File Converter (visitez la documentation en ligne pour connaître la liste des extensions de fichier compatibles).</value>
-    <comment>To use File Converter please open the explorer and right-click on any file you like to bring up the context menu where you will find File Converter commands (see the online documentation to see the list of compatible file formats).</comment>
+    <value>Pour utiliser ZFileConverter, ouvrez l'explorateur et faites un clic droit sur le ou les fichier(s) que vous souhaitez convertir pour faire apparaître le menu contextuel où vous trouverez ZFileConverter (visitez la documentation en ligne pour connaître la liste des extensions de fichier compatibles).</value>
+    <comment>To use ZFileConverter please open the explorer and right-click on any file you like to bring up the context menu where you will find ZFileConverter commands (see the online documentation to see the list of compatible file formats).</comment>
   </data>
   <data name="FileNameTemplate" xml:space="preserve">
     <value>Modèle de nom de fichier</value>
@@ -226,12 +226,12 @@
     <value>Aucune</value>
   </data>
   <data name="InstallButtonDescription" xml:space="preserve">
-    <value>La mise à jour a été téléchargée. Quitte File Converter et installe la mise à jour maintenant.</value>
-    <comment>The update has been downloaded. Exit File Converter and install the update now.</comment>
+    <value>La mise à jour a été téléchargée. Quitte ZFileConverter et installe la mise à jour maintenant.</value>
+    <comment>The update has been downloaded. Exit ZFileConverter and install the update now.</comment>
   </data>
   <data name="InstallButtonTitle" xml:space="preserve">
-    <value>Installer quand je quitte File Converter</value>
-    <comment>Install when I exit File Converter</comment>
+    <value>Installer quand je quitte ZFileConverter</value>
+    <comment>Install when I exit ZFileConverter</comment>
   </data>
   <data name="IssueButtonDescription" xml:space="preserve">
     <value>Signaler un problème</value>
@@ -319,7 +319,7 @@ utilisez MAJ pour une version en majuscules</value>
     <value>Voir les changements ...</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Configuration de File Converter</value>
+    <value>Configuration de ZFileConverter</value>
   </data>
   <data name="SettingsButtonTooltip" xml:space="preserve">
     <value>Configuration</value>
@@ -331,14 +331,14 @@ utilisez MAJ pour une version en majuscules</value>
     <value>rotation de 90° dans le sens horaire</value>
   </data>
   <data name="UpgradeAvailable" xml:space="preserve">
-    <value>Une mise à jour de File Converter est disponible. Il est vivement recommandé de l'installer dès que possible!</value>
-    <comment>An update for File Converter is available. It is strongly recommended that you install it as soon as possible!</comment>
+    <value>Une mise à jour de ZFileConverter est disponible. Il est vivement recommandé de l'installer dès que possible!</value>
+    <comment>An update for ZFileConverter is available. It is strongly recommended that you install it as soon as possible!</comment>
   </data>
   <data name="UpgradeDownloadInProgress" xml:space="preserve">
     <value>Téléchargement de la mise à jour en cours...</value>
   </data>
   <data name="UpgradeWindowTitle" xml:space="preserve">
-    <value>Mise à jour de File Converter</value>
+    <value>Mise à jour de ZFileConverter</value>
   </data>
   <data name="VideoEncodingQualityTooltip" xml:space="preserve">
     <value>Définit le rapport 'poids du fichier' contre 'qualité vidéo'. Une valeur basse donnera un fichier plus léger, une valeur haute une meilleure qualité vidéo.</value>
@@ -560,7 +560,7 @@ utilisez MAJ pour une version en majuscules</value>
     <value>Microsoft Word doit être installé pour pouvoir convertir les documents Word.</value>
   </data>
   <data name="WebsiteButtonDescription" xml:space="preserve">
-    <value>Ouvrir le site web de File Converter</value>
+    <value>Ouvrir le site web de ZFileConverter</value>
   </data>
   <data name="ErrorDuringJobInitialization" xml:space="preserve">
     <value>L'initialisation du processus de conversion a échoué.</value>
@@ -581,6 +581,6 @@ utilisez MAJ pour une version en majuscules</value>
     <value>Erreur</value>
   </data>
   <data name="ErrorCantLoadSettings" xml:space="preserve">
-    <value>Impossible de charger la configuration de File Converter. Voulez vous appliquer la configuration par défaut ?</value>
+    <value>Impossible de charger la configuration de ZFileConverter. Voulez vous appliquer la configuration par défaut ?</value>
   </data>
 </root>

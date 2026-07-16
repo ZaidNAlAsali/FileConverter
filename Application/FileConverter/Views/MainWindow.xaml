@@ -1,66 +1,129 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileConverter"
         xmlns:valueConverters="clr-namespace:FileConverter.ValueConverters"
         xmlns:project="clr-namespace:FileConverter.Properties"
         xmlns:controls="clr-namespace:FileConverter.Controls"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d" x:Class="FileConverter.Views.MainWindow"
-        Height="500" Width="950" MinHeight="480" MinWidth="640" WindowStartupLocation="CenterScreen" Icon="/FileConverter;component/Resources/ApplicationIcon.ico"
+        Height="620" Width="980" MinHeight="500" MinWidth="720"
+        WindowStartupLocation="CenterScreen"
+        Icon="/FileConverter;component/Resources/ApplicationIcon.ico"
+        Background="{DynamicResource CanvasBrush}"
+        local:ApplicationThemeManager.EnableWindowTheme="True"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Closing">
             <behaviors:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
+
     <Window.Resources>
         <valueConverters:ConversionJobsToProgressState x:Key="ConversionJobsToProgressState" />
         <valueConverters:ConversionJobsToProgressValue x:Key="ConversionJobsToProgressValue" />
     </Window.Resources>
+
     <Window.Title>
-        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(local:Application.ApplicationVersion)"/>
+        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(local:Application.ApplicationVersion)" />
     </Window.Title>
+
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo 
+        <TaskbarItemInfo
             ProgressState="{Binding ConversionJobs, Converter={StaticResource ConversionJobsToProgressState}}"
             ProgressValue="{Binding ConversionJobs, Converter={StaticResource ConversionJobsToProgressValue}}" />
     </Window.TaskbarItemInfo>
 
-    <Grid Margin="10">
+    <Grid Margin="28,24,28,28">
         <Grid.RowDefinitions>
-            <RowDefinition Height="64" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="18" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Product header -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="64" />
-                <ColumnDefinition Width="64" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0">
-                <Label Content="{x:Static project:Resources.ConversionQueueTitle}" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
-                <Label Content="{Binding InformationMessage}" VerticalAlignment="Center" FontSize="13.333" HorizontalAlignment="Right"/>
-            </DockPanel>
-            <Button Grid.Column="1" Margin="3" Command="{Binding ShowDiagnosticsCommand}" ToolTip="{x:Static project:Resources.DiagnosticsButtonTooltip}" Style="{StaticResource TileButton}">
-                <Image HorizontalAlignment="Left" Height="48" Width="48" VerticalAlignment="Top" Source="/Resources/LogIcon.png" />
-            </Button>
-            <Button Grid.Column="2" Margin="3" Command="{Binding ShowSettingsCommand}" ToolTip="{x:Static project:Resources.SettingsButtonTooltip}" Style="{StaticResource TileButton}">
-                <Image HorizontalAlignment="Left" Height="48" Width="48" VerticalAlignment="Top" Source="/Resources/SettingsIcon.ico" />
-            </Button>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Width="52" Height="52" CornerRadius="14" Background="{DynamicResource InkPanelBrush}" Margin="0,0,14,0">
+                    <Image Width="34" Height="34" Source="/FileConverter;component/Resources/ApplicationIcon.ico"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="ZFILECONVERTER" Style="{StaticResource EyebrowText}" Margin="1,0,0,3" />
+                    <TextBlock Text="{x:Static project:Resources.ConversionQueueTitle}" Style="{StaticResource PageTitleText}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Margin="0,0,8,0" Command="{Binding ShowDiagnosticsCommand}"
+                        ToolTip="{x:Static project:Resources.DiagnosticsButtonTooltip}"
+                        Style="{StaticResource HeaderActionButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE9D9;" FontSize="17" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static project:Resources.Diagnostics}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ShowSettingsCommand}"
+                        ToolTip="{x:Static project:Resources.SettingsButtonTooltip}"
+                        Style="{StaticResource HeaderActionButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE713;" FontSize="17" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static project:Resources.Settings}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-            <ItemsControl ItemsSource="{Binding ConversionJobs}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:ConversionJobControl Margin="5"></controls:ConversionJobControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <!-- Queue workspace -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="22,17,22,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Active conversions" Style="{StaticResource SectionTitleText}" />
+                        <TextBlock Text="Files stay local while each job moves through the queue."
+                                   Style="{StaticResource CaptionText}" Margin="0,3,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="{DynamicResource AccentSoftBrush}" CornerRadius="12" Padding="10,4" Margin="0,0,10,0">
+                            <TextBlock Foreground="{DynamicResource MainDarkBrush}" FontWeight="SemiBold">
+                                <Run Text="{Binding ConversionJobs.Count, Mode=OneWay}" />
+                                <Run Text=" in queue" />
+                            </TextBlock>
+                        </Border>
+                        <TextBlock Text="{Binding InformationMessage}" Foreground="{DynamicResource WarmAccentBrush}"
+                                   FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="1" Background="{DynamicResource BorderSoftBrush}" />
+
+                <ScrollViewer Grid.Row="2" Margin="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
+                    <ItemsControl ItemsSource="{Binding ConversionJobs}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:ConversionJobControl Margin="5,5,5,9" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

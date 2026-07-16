@@ -1,36 +1,45 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+about: Report a reproducible ZFileConverter problem
+title: "[Bug] "
+labels: bug
+assignees: ""
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## What happened?
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Describe the problem and what you expected instead.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Reproduction
 
-**Screenshots and Logs**
-If applicable, add the following informations to help explain your problem.
-- Registry.xml
-- Settings.user.xml
-- The Diagnostics folder of the session that encountered the issue.
-- A screenshot (if possible)
+1. Select:
+2. Choose:
+3. Observe:
 
-You will find the xml files and diagnostics folder in `%localappdata%\FileConverter`.
+## Conversion details
 
-**Desktop (please complete the following information):**
- - OS: [e.g. Windows 11 64bits]
+- Input format:
+- Selected preset:
+- Output format:
+- Does it happen with one file or a batch?
+- Microsoft Office or LibreOffice involved? If yes, include its version.
 
-**Additional context**
-Add any other context about the problem here.
+## Environment
+
+- ZFileConverter version:
+- Windows version and architecture:
+- Installation type: MSI / local build
+
+## Diagnostics
+
+Diagnostics and settings are stored under:
+
+```text
+%LOCALAPPDATA%\ZFileConverter
+```
+
+Attach the relevant diagnostics folder when possible. Settings and logs may contain filenames, paths, or custom preset details, so remove private information before uploading them publicly.
+
+## Screenshots or additional context
+
+Add anything else that helps isolate the issue.

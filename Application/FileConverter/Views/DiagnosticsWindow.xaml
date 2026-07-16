@@ -8,47 +8,64 @@
         xmlns:local="clr-namespace:FileConverter"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Height="600" Width="800" Icon="/FileConverter;component/Resources/ApplicationIcon.ico"
+        MinHeight="480" MinWidth="680" Height="650" Width="900"
+        WindowStartupLocation="CenterOwner"
+        Icon="/FileConverter;component/Resources/ApplicationIcon.ico"
+        Background="{DynamicResource CanvasBrush}"
+        local:ApplicationThemeManager.EnableWindowTheme="True"
         DataContext="{Binding Diagnostics, Source={StaticResource Locator}}">
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Closing">
             <behaviors:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
+
     <Window.Title>
-        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(local:Application.ApplicationVersion)"/>
+        <Binding Converter="{StaticResource ApplicationVersionToApplicationName}" Mode="OneWay" Path="(local:Application.ApplicationVersion)" />
     </Window.Title>
-    <Grid>
+
+    <Grid Margin="26,22,26,26">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="18" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
-            <Image Grid.Column="0" Height="48" Width="48" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/Resources/LogIcon.png" />
-            <Label Grid.Column="1" Content="{x:Static project:Resources.Diagnostics}" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
+            <Border Width="48" Height="48" CornerRadius="13" Background="{DynamicResource InkPanelBrush}" Margin="0,0,14,0">
+                <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE9D9;" FontSize="23" Foreground="White"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="SYSTEM DETAIL" Style="{StaticResource EyebrowText}" />
+                <TextBlock Text="{x:Static project:Resources.Diagnostics}" Style="{StaticResource PageTitleText}" FontSize="25" />
+            </StackPanel>
         </Grid>
 
-        <TabControl Grid.Row="1" Margin="5" ItemsSource="{Binding Path=(diagnostics:Debug.Data), Mode=OneWay}">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}"/>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate DataType="{x:Type diagnostics:DiagnosticsData}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
-                        <TextBox TextWrapping="NoWrap" FontFamily="Consolas" IsReadOnly="True"
-                                   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False"
-                                   Text="{Binding Content, Mode=OneWay}" />
-                    </ScrollViewer>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="16">
+            <TabControl ItemsSource="{Binding Path=(diagnostics:Debug.Data), Mode=OneWay}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type diagnostics:DiagnosticsData}">
+                        <Border Background="{DynamicResource InkPanelBrush}" CornerRadius="10" Padding="4" Margin="0,2,0,0">
+                            <TextBox TextWrapping="NoWrap" FontFamily="Cascadia Mono" FontSize="12"
+                                     Foreground="#E5EDF8" Background="Transparent" BorderThickness="0" IsReadOnly="True"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     ScrollViewer.CanContentScroll="False"
+                                     Text="{Binding Content, Mode=OneWay}" />
+                        </Border>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </Border>
     </Grid>
 </Window>

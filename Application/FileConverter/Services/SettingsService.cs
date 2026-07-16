@@ -86,17 +86,8 @@ namespace FileConverter.Services
                         userSettings.SerializationVersion = Settings.Version;
                     }
 
-                    // Remove default settings.
-                    if (userSettings.ConversionPresets != null)
-                    {
-                        for (int index = userSettings.ConversionPresets.Count - 1; index >= 0; index--)
-                        {
-                            if (userSettings.ConversionPresets[index].IsDefaultSettings)
-                            {
-                                userSettings.ConversionPresets.RemoveAt(index);
-                            }
-                        }
-                    }
+                    // Preserve the user's existing preset library. Merge only adds currently missing
+                    // first-run defaults, so edited or retired presets are never deleted during an update.
                 }
             }
 
@@ -113,6 +104,8 @@ namespace FileConverter.Services
         {
             // Load previous preset in order to cancel changes.
             this.Settings = this.Load();
+            ApplicationThemeManager.ApplyTheme(
+                this.Settings?.AppearanceTheme ?? ApplicationTheme.Dark);
         }
 
         private Settings Load()

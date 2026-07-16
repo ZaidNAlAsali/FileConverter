@@ -184,7 +184,7 @@
     <value>エンコード速度 :</value>
   </data>
   <data name="FileConverterStartHelp1" xml:space="preserve">
-    <value>File Converterはシェル拡張です。</value>
+    <value>ZFileConverterはシェル拡張です。</value>
   </data>
   <data name="FileConverterStartHelp2" xml:space="preserve">
     <value>つまり、ウィンドウズのエクスプローラーに統合されているのだ。</value>

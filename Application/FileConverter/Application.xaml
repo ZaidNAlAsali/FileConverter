@@ -27,7 +27,7 @@
                         <Setter Property="TextAlignment" Value="Left" />
                         <Setter Property="Foreground" Value="{DynamicResource Markdown_ForegroundBrush}" />
                         <Setter Property="Background" Value="{DynamicResource Markdown_BackgroundBrush}" />
-                        <Setter Property="LineHeight" Value="9"/>
+                        <Setter Property="LineHeight" Value="20"/>
                         <Setter Property="FontSize" Value="13" />
                     </Style>
                 </xaml:Markdown.DocumentStyle>

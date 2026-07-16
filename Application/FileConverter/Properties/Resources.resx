@@ -187,10 +187,10 @@
     <value>ZFileConverter is a shell extension.</value>
   </data>
   <data name="FileConverterStartHelp2" xml:space="preserve">
-    <value>That means it is integrated into the Windows explorer.</value>
+    <value>ZFileConverter lives directly inside File Explorer.</value>
   </data>
   <data name="FileConverterStartHelp3" xml:space="preserve">
-    <value>To use ZFileConverter please open the explorer and right-click on any file you like to bring up the context menu where you will find ZFileConverter commands (see the readme file to see the list of compatible file formats).</value>
+    <value>Select one or more files, right-click, then choose ZFileConverter and the format you want.</value>
   </data>
   <data name="FileNameTemplate" xml:space="preserve">
     <value>File name template</value>

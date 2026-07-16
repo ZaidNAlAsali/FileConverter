@@ -1,0 +1,53 @@
+name: Windows Release Build
+
+on:
+  push:
+    branches: [integration]
+  pull_request:
+    branches: [integration]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-x64-release:
+    name: Build x64 Release
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Configure NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore and build
+        run: msbuild FileConverter.sln -t:Restore,Build -p:Configuration=Release -p:Platform=x64 -v:minimal
+
+      - name: Verify release artifacts
+        shell: pwsh
+        run: |
+          $artifacts = @(
+            "Application/FileConverter/bin/x64/Release/FileConverter.exe",
+            "Application/FileConverterExtension/bin/x64/Release/FileConverterExtension.dll",
+            "Installer/bin/x64/Release/ZFileConverter-setup.msi"
+          )
+          foreach ($artifact in $artifacts) {
+            if (-not (Test-Path $artifact)) {
+              throw "Missing release artifact: $artifact"
+            }
+            Get-Item $artifact | Select-Object FullName, Length
+          }
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZFileConverter-x64-release
+          path: Installer/bin/x64/Release/ZFileConverter-setup.msi
+          if-no-files-found: error
+          retention-days: 14
