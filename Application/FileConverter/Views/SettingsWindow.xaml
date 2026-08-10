@@ -164,7 +164,7 @@
                                                 </TextBlock.Text>
                                             </TextBlock>
                                             <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,8,0,0">
-                                                <Hyperlink CommandParameter="https://github.com/Tichau/FileConverter/wiki/Output-file-path-template"
+                                                <Hyperlink CommandParameter="https://github.com/ZaidNAlAsali/ZFileConverter/blob/integration/docs/preset-reference.md#output-file-path-templates"
                                                            Command="{Binding OpenUrlCommand, Mode=OneWay}"><x:Static Member="project:Resources.Help" /></Hyperlink>
                                             </TextBlock>
                                         </Grid>
@@ -227,7 +227,7 @@
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                     <TextBlock Grid.Row="3" Margin="0,10,0,0">
-                                        <Hyperlink CommandParameter="https://github.com/Tichau/FileConverter/wiki/Input-file-post-conversion-actions"
+                                        <Hyperlink CommandParameter="https://github.com/ZaidNAlAsali/ZFileConverter/blob/integration/docs/preset-reference.md#post-conversion-actions"
                                                    Command="{Binding OpenUrlCommand, Mode=OneWay}"><x:Static Member="project:Resources.Help" /></Hyperlink>
                                     </TextBlock>
                                 </Grid>
@@ -597,7 +597,7 @@
                             </StackPanel>
                             <StackPanel Grid.Row="2">
                                 <Button Command="{Binding OpenUrlCommand, Mode=OneWay}"
-                                        CommandParameter="https://github.com/ZaidNAlAsali/FileConverter"
+                                        CommandParameter="https://github.com/ZaidNAlAsali/ZFileConverter"
                                         Background="{DynamicResource InkPanelSoftBrush}" BorderBrush="#36506F" Foreground="White"
                                         HorizontalContentAlignment="Left">
                                     <StackPanel Orientation="Horizontal">
@@ -641,7 +641,7 @@
                                             ToolTip="{x:Static project:Resources.IssueButtonDescription}"
                                             AutomationProperties.Name="Open project issues"
                                             Command="{Binding OpenUrlCommand, Mode=OneWay}"
-                                            CommandParameter="https://github.com/ZaidNAlAsali/FileConverter/issues">
+                                            CommandParameter="https://github.com/ZaidNAlAsali/ZFileConverter/issues">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE730;" FontSize="16" Margin="0,0,7,0" />
                                             <TextBlock Text="Issues" />
@@ -651,7 +651,7 @@
                                             ToolTip="{x:Static project:Resources.DocumentationButtonDescription}"
                                             AutomationProperties.Name="Open documentation"
                                             Command="{Binding OpenUrlCommand, Mode=OneWay}"
-                                            CommandParameter="https://github.com/Tichau/FileConverter/wiki">
+                                            CommandParameter="https://github.com/ZaidNAlAsali/ZFileConverter#readme">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8A5;" FontSize="16" Margin="0,0,7,0" />
                                             <TextBlock Text="Docs" />
@@ -672,7 +672,7 @@
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Changes are applied to the Explorer menu after saving."
+            <TextBlock Text="Save applies changes to Explorer and keeps this window open."
                        Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
             <Button Grid.Column="1" Content="{x:Static project:Resources.Close}" MinWidth="100"
                     Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}" />

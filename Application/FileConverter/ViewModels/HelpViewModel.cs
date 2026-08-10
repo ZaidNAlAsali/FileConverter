@@ -41,6 +41,15 @@ namespace FileConverter.ViewModels
         private void Close(CancelEventArgs args)
         {
             INavigationService navigationService = Ioc.Default.GetRequiredService<INavigationService>();
+
+            Application application = Application.Current as Application;
+            if (application?.ConsumeShowSettingsAfterHelpRequest() == true)
+            {
+                // Show the next main window before closing Help so the navigation service
+                // does not interpret this transition as the end of the application.
+                navigationService.Show(Pages.Settings);
+            }
+
             navigationService.Close(Pages.Help, args != null);
         }
     }

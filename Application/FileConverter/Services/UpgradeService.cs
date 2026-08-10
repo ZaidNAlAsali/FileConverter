@@ -5,6 +5,7 @@ namespace FileConverter.Services
     using System;
     using System.IO;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml;
@@ -238,20 +239,50 @@ namespace FileConverter.Services
             {
                 await this.webClient.DownloadFileTaskAsync(uri, installerPath);
 
+                string checksumText = await this.webClient.DownloadStringTaskAsync(this.UpgradeVersionDescription.InstallerURL + ".sha256");
+                VerifyInstallerChecksum(installerPath, checksumText);
+
                 this.UpgradeVersionDescription.InstallerDownloadProgress = 100;
                 this.UpgradeVersionDescription.InstallerDownloadInProgress = false;
-                this.UpgradeVersionDescription = null;
             }
             catch (Exception exception)
             {
+                if (File.Exists(installerPath))
+                {
+                    File.Delete(installerPath);
+                }
+
                 Debug.LogError("Failed to download the new ZFileConverter upgrade. You should try again or download it manually.");
                 Debug.Log(exception.ToString());
                 this.UpgradeVersionDescription.NeedToUpgrade = false;
                 this.UpgradeVersionDescription.InstallerDownloadInProgress = false;
+                this.UpgradeVersionDescription.InstallerDownloadProgress = 0;
+                this.UpgradeVersionDescription.InstallerPath = null;
             }
             finally
             {
                 this.webClient.DownloadProgressChanged -= this.WebClient_DownloadProgressChanged;
+            }
+        }
+
+        private static void VerifyInstallerChecksum(string installerPath, string checksumText)
+        {
+            string[] checksumParts = (checksumText ?? string.Empty).Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            if (checksumParts.Length == 0)
+            {
+                throw new InvalidDataException("The published installer checksum is missing.");
+            }
+
+            string actualChecksum;
+            using (FileStream installerStream = File.OpenRead(installerPath))
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                actualChecksum = BitConverter.ToString(sha256.ComputeHash(installerStream)).Replace("-", string.Empty);
+            }
+
+            if (!string.Equals(checksumParts[0], actualChecksum, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException("The downloaded installer failed its SHA-256 integrity check.");
             }
         }
 

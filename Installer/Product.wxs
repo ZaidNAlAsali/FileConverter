@@ -1,6 +1,6 @@
 ﻿<!-- Upgrade documentation: http://wixtoolset.org/documentation/manual/v3/howtos/updates/major_upgrade.html -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-    <Package Name="ZFileConverter" Language="1033" Version="2.3.1" Manufacturer="ZaidNAlAsali" UpgradeCode="e3ca717b-a897-418a-bbef-5c7e35c76e4b" InstallerVersion="500">
+    <Package Name="ZFileConverter" Language="1033" Version="2.3.2" Manufacturer="ZaidNAlAsali" UpgradeCode="e3ca717b-a897-418a-bbef-5c7e35c76e4b" InstallerVersion="500">
         <Icon Id="icon.ico" SourceFile="..\Resources\Icons\ApplicationIcon.ico" />
         <Property Id="ARPPRODUCTICON" Value="icon.ico" />
         <SetProperty Id="ARPINSTALLLOCATION" Value="[ApplicationFolder]" After="CostFinalize" />
@@ -179,9 +179,6 @@
             </Component>
             <Component Guid="{92FE38C7-EE75-4F85-BA97-C221E132853F}">
                 <File Id="yeti.mmedia.dll" KeyPath="yes" Source="$(var.FileConverter.TargetDir)yeti.mmedia.dll" Checksum="yes" />
-            </Component>
-            <Component Guid="{6268D6C0-42D8-4487-AC4B-33C9874C9E2F}">
-                <File Id="WpfAnimatedGif.dll" KeyPath="yes" Source="$(var.FileConverter.TargetDir)WpfAnimatedGif.dll" Checksum="yes" />
             </Component>
 
             <!-- Configuration and documentation -->

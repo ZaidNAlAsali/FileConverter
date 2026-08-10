@@ -1,5 +1,22 @@
 # Change Log
 
+## Version 2.3.2
+
+### Settings workflow
+
+- Continued a normal application launch from the Explorer tutorial into Settings instead of exiting after onboarding.
+- Changed Save to persist and apply settings without closing the Settings window.
+- Made Settings view models window-scoped so closing unsaved changes and reopening cannot reuse stale state.
+- Reloaded Explorer preset references when the settings file changes while preserving the last known-good menu during a save.
+
+### Reliability and maintenance
+
+- Verified downloaded updater installers against their published adjacent SHA-256 files before execution and repaired the successful-download lifecycle so the installer remains available at shutdown.
+- Removed the unused animated-GIF dependency left behind by the retired onboarding animation.
+- Updated Magick.NET-Q16-AnyCPU to 14.15.0, which resolves the advisory set affecting 14.14.0 in the MNG, 8BIM, and MVG decoders.
+- Replaced stale repository and upstream wiki links with maintained ZFileConverter documentation.
+- Added an authoritative project guide, a reusable Hermes audit brief, and a local preset reference.
+
 ## Version 2.3.1
 
 ### Branding fixes

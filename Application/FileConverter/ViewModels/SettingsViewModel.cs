@@ -483,9 +483,6 @@ namespace FileConverter.ViewModels
             // Save changes.
             ISettingsService settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             settingsService.SaveSettings();
-
-            INavigationService navigationService = Ioc.Default.GetRequiredService<INavigationService>();
-            navigationService.Close(Pages.Settings, false);
         }
 
         private void CreateFolder()

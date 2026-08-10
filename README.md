@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.1/ZFileConverter-setup.msi"><strong>Download ZFileConverter 2.3.1</strong></a>
+  <a href="https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.2/ZFileConverter-setup.msi"><strong>Download ZFileConverter 2.3.2</strong></a>
   ·
   <a href="CHANGELOG.md">Release notes</a>
   ·
@@ -80,7 +80,7 @@ ZFileConverter also checks the standard 64-bit and 32-bit LibreOffice installati
 
 ## Install
 
-1. Download [`ZFileConverter-setup.msi`](https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.1/ZFileConverter-setup.msi).
+1. Download [`ZFileConverter-setup.msi`](https://github.com/ZaidNAlAsali/ZFileConverter/releases/download/v2.3.2/ZFileConverter-setup.msi).
 2. Run the installer.
 3. Select files in File Explorer and open the **ZFileConverter** context menu.
 
@@ -102,6 +102,8 @@ The Settings window is the source of truth for the Explorer menu. You can:
 - tune codecs, quality, scaling, rotation, and audio behavior;
 - configure output naming and destination rules;
 - export presets for sharing or import them later.
+
+See the [preset reference](docs/preset-reference.md) for output-path tokens and post-conversion actions.
 
 Upgrading to 2.3 preserves existing and customized preset libraries. The smaller 16-preset collection is used for fresh first-run settings rather than deleting a long-time user's configuration.
 

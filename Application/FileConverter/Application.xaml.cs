@@ -39,7 +39,7 @@ namespace FileConverter
                                                       {
                                                           Major = 2,
                                                           Minor = 3,
-                                                          Patch = 1,
+                                                          Patch = 2,
                                                       };
 
         private bool needToRunConversionThread;
@@ -51,6 +51,7 @@ namespace FileConverter
         private bool verbose;
         private bool showSettings;
         private bool showHelp;
+        private bool showSettingsAfterHelp;
 
         [DllImport("kernel32.dll")]
         static extern bool AttachConsole(uint dwProcessId);
@@ -77,6 +78,17 @@ namespace FileConverter
             {
                 this.OnApplicationTerminate.Invoke(this, new ApplicationTerminateArgs(float.NaN));
             }
+        }
+
+        public bool ConsumeShowSettingsAfterHelpRequest()
+        {
+            if (!this.showSettingsAfterHelp)
+            {
+                return false;
+            }
+
+            this.showSettingsAfterHelp = false;
+            return true;
         }
 
         public static void AskForShutdown()
@@ -188,6 +200,7 @@ namespace FileConverter
             base.OnSessionEnding(e);
 
             this.isSessionEnding = true;
+            this.showSettingsAfterHelp = false;
             this.Shutdown();
         }
 
@@ -259,8 +272,10 @@ namespace FileConverter
 
             if (args.Length == 1)
             {
-                // Display help windows to explain that this application is a context menu extension.
+                // Explain the Explorer-first workflow, then continue to the settings users
+                // expect when they launch the application directly.
                 this.showHelp = true;
+                this.showSettingsAfterHelp = true;
                 return;
             }
 

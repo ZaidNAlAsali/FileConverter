@@ -10,6 +10,7 @@
     <RootNamespace>FileConverterExtension</RootNamespace>
     <AssemblyName>FileConverterExtension</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <GenerateResourceUsePreserializedResources>false</GenerateResourceUsePreserializedResources>

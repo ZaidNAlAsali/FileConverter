@@ -24,6 +24,8 @@ namespace FileConverterExtension
         private const int MaximumProcessArgumentsLength = 8000; // https://learn.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/command-line-string-limitation
 
         private PresetReference[] presetReferences = null;
+        private string settingsSourcePath;
+        private System.DateTime settingsLastWriteTimeUtc = System.DateTime.MinValue;
         private List<MenuEntry> menuEntries = new List<MenuEntry>();
 
         private HashSet<string> extensionCache = new HashSet<string>();
@@ -240,32 +242,51 @@ namespace FileConverterExtension
 
         private void LoadExtensionSettingsIfNecessary()
         {
-            if (this.presetReferences != null)
+            string sourcePath = File.Exists(PathHelpers.UserSettingsFilePath)
+                ? PathHelpers.UserSettingsFilePath
+                : PathHelpers.DefaultSettingsFilePath;
+
+            System.DateTime lastWriteTimeUtc = File.Exists(sourcePath)
+                ? File.GetLastWriteTimeUtc(sourcePath)
+                : System.DateTime.MinValue;
+
+            if (this.presetReferences != null &&
+                string.Equals(this.settingsSourcePath, sourcePath, System.StringComparison.OrdinalIgnoreCase) &&
+                this.settingsLastWriteTimeUtc == lastWriteTimeUtc)
             {
                 return;
             }
 
-            if (File.Exists(PathHelpers.UserSettingsFilePath))
-            {
-                try
-                {
-                    XmlHelpers.LoadFromFile("Settings", PathHelpers.UserSettingsFilePath, out this.presetReferences);
-                    return;
-                }
-                catch
-                {
-                    // Can't handle this error in the explorer extension.
-                }
-            }
-
             try
             {
-                XmlHelpers.LoadFromFile("Settings", PathHelpers.DefaultSettingsFilePath, out this.presetReferences);
+                XmlHelpers.LoadFromFile("Settings", sourcePath, out PresetReference[] loadedPresetReferences);
+                if (loadedPresetReferences != null)
+                {
+                    this.presetReferences = loadedPresetReferences;
+                    this.settingsSourcePath = sourcePath;
+                    this.settingsLastWriteTimeUtc = lastWriteTimeUtc;
+                }
             }
             catch
             {
-                // Can't handle this error in the explorer extension.
-                this.presetReferences = new PresetReference[0];
+                // Keep the last known-good menu if settings are briefly unavailable while
+                // the application replaces the file, then retry on the next menu request.
+                if (this.presetReferences == null &&
+                    !string.Equals(sourcePath, PathHelpers.DefaultSettingsFilePath, System.StringComparison.OrdinalIgnoreCase) &&
+                    File.Exists(PathHelpers.DefaultSettingsFilePath))
+                {
+                    try
+                    {
+                        XmlHelpers.LoadFromFile("Settings", PathHelpers.DefaultSettingsFilePath, out this.presetReferences);
+                        this.settingsSourcePath = PathHelpers.DefaultSettingsFilePath;
+                        this.settingsLastWriteTimeUtc = File.GetLastWriteTimeUtc(PathHelpers.DefaultSettingsFilePath);
+                    }
+                    catch
+                    {
+                        // Explorer cannot surface this error. An empty menu is safer than
+                        // throwing from the shell extension.
+                    }
+                }
             }
 
             if (this.presetReferences == null)

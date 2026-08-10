@@ -45,7 +45,7 @@ namespace FileConverter.ViewModels
                 .AddSingleton<HelpViewModel>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<UpgradeViewModel>()
-                .AddSingleton<SettingsViewModel>()
+                .AddTransient<SettingsViewModel>()
                 .AddSingleton<DiagnosticsViewModel>();
         }
     }
