@@ -190,7 +190,7 @@ namespace FileConverter.Services
             }
             catch (Exception)
             {
-                Debug.Log("Error while retrieving change log.");
+                Debug.Log("Error while retrieving version description.");
                 return null;
             }
 
@@ -288,6 +288,11 @@ namespace FileConverter.Services
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs eventArgs)
         {
+            if (this.UpgradeVersionDescription == null)
+            {
+                return;
+            }
+
             this.UpgradeVersionDescription.InstallerDownloadProgress = eventArgs.ProgressPercentage;
         }
     }
