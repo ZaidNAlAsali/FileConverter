@@ -6,17 +6,17 @@ REM Analyse command arguments
 set quiet="false"
 for %%x in (%*) do (
     if %%x==--debug (
-        set msi="bin\x64\Debug\ZZZZFileConverter-setup.msi"
+        set msi="bin\x64\Debug\ZFileConverter-setup.msi"
     )
     if %%x==-d (
-        set msi="bin\x64\Debug\FileConverter-setup.msi"
+        set msi="bin\x64\Debug\ZFileConverter-setup.msi"
     )
 
     if %%x==--release (
-        set msi="bin\x64\Release\FileConverter-setup.msi"
+        set msi="bin\x64\Release\ZFileConverter-setup.msi"
     )
     if %%x==-r (
-        set msi="bin\x64\Release\FileConverter-setup.msi"
+        set msi="bin\x64\Release\ZFileConverter-setup.msi"
     )
 
     if %%x==--install (
@@ -61,11 +61,11 @@ if %action%=="install" (
     ) else (
         msiexec /i %MSI% /l*v %TEMP%\vmmsi.log
     )
-
+    
     echo "Open install logs"
     code "%TEMP%\vmmsi.log"
     exit
-)
+) 
 if %action%=="uninstall" (
     echo "Uninstall ZFileConverter using %MSI%..."
 
@@ -79,5 +79,5 @@ if %action%=="uninstall" (
     code "%TEMP%\vmmsi.log"
     exit
 )
-
+    
 echo "Invalid action " %action%

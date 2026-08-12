@@ -44,8 +44,6 @@ namespace FileConverter.ConversionJobs
             {
                 using (MagickImageCollection images = new MagickImageCollection())
                 {
-                    MagickReadSettings settings = new MagickReadSettings();
-                    settings.Density = new Density(1, 1);
                     images.Read(this.InputFilePath);
 
                     return images.Count;
@@ -207,7 +205,7 @@ namespace FileConverter.ConversionJobs
                     uint width = System.Math.Min(image.Width, maximumSize);
                     uint height = System.Math.Min(image.Height, maximumSize);
 
-                    Debug.Log($"Clamp size to maximum size of {width}x{width} (from {image.Width}x{image.Height} to {width}x{height}).");
+                    Debug.Log($"Clamp size to maximum size of {width}x{height} (from {image.Width}x{image.Height} to {width}x{height}).");
 
                     image.Scale(width, height);
                 }
